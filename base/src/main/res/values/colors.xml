@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0079FE</color>
+    <color name="colorPrimaryDark">#0062BC</color>
+
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+
+    <color name="border">#F0F0F0</color>
+    <color name="primary_text">#333333</color>
+    <color name="second_text">#999999</color>
+    <color name="bg">#F5F5F5</color>
+
+
+    <color name="LimeGreen">#32CD32</color>
+    <color name="DarkOrange">#FF8C00</color>
+    <color name="Firebrick">#EE2C2C</color>
+
+    <color name="transparent">#00000000</color>
+
+</resources>

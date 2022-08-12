@@ -1,0 +1,229 @@
+package com.example.ppjoke.ui.detail
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.ppjoke.R
+import com.example.ppjoke.adapter.FeedCommentAdapter
+import com.example.ppjoke.bean.FeedBean
+import com.example.ppjoke.databinding.LayoutFeedDetailBottomInateractionBinding
+import com.example.ppjoke.databinding.LayoutFeedDetailTypeVideoBinding
+import com.example.ppjoke.ui.binding_action.InteractionPresenter
+import com.example.ppjoke.ui.profile.ProfileActivity
+import com.example.ppjoke.widget.dialog.CommentDialog
+import com.xtc.base.BaseMvvmActivity
+import kotlin.properties.Delegates
+
+class FeedVideoDetailActivity :
+    BaseMvvmActivity<LayoutFeedDetailTypeVideoBinding, FeedDetailViewModel>(),View.OnClickListener {
+    private var backPressd=false
+    private var adapter: FeedCommentAdapter? = null
+    private lateinit var mInateractionBinding: LayoutFeedDetailBottomInateractionBinding
+    private var feed:FeedBean?=null
+    private var position by Delegates.notNull<Int>()
+    override fun initView(savedInstanceState: Bundle?) {
+        binding.lifecycleOwner = this
+        feed = intent.getParcelableExtra<FeedBean>("KEY_FEED")
+        position=intent.getIntExtra("KEY_POSITION",-1)
+        binding.feed = feed
+        binding.emptyView.setTitle("还没有评论，快来抢一楼吧")
+        mInateractionBinding=binding.bottomInteraction
+        val authorInfoView=binding.authorInfo.root
+        var params=authorInfoView.layoutParams as CoordinatorLayout.LayoutParams
+        params.behavior=ViewAnchorBehavior(R.id.player_view)
+        val layoutParams=binding.playerView.layoutParams as CoordinatorLayout.LayoutParams
+        val behavior=layoutParams.behavior as ViewZoomBehavior
+        behavior.setViewZoomCallback(object :ViewZoomBehavior.ViewZoomCallback{
+            override fun onDragZoom(height: Int) {
+                val bottom=binding.playerView.bottom
+                val moveUp=height<bottom
+                val fullScreen=if(moveUp) height>=binding.coordinator.bottom-mInateractionBinding.root.height
+                         else height>=binding.coordinator.bottom
+                setViewAppearance(fullScreen)
+            }
+
+        })
+        if (feed != null) {
+            binding.playerView.bindData(
+                "feed_video_detail",
+                feed!!.width ?: 0,
+                feed!!.height ?: 0,
+                feed!!.cover,
+                feed!!.url
+            )
+            binding.playerView.post {
+                val fullscreen = binding.playerView.bottom >= binding.coordinator.bottom
+                setViewAppearance(fullscreen)
+            }
+            feed!!.itemId?.let { mViewModel?.getCommentList(itemId = it) }
+        }
+        binding.actionClose.setOnClickListener { finish() }
+        binding.fullscreenAuthorInfo.authorAvatar.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            intent.putExtra("USERID", feed?.authorId)
+            startActivity(intent)
+        }
+        binding.fullscreenAuthorInfo.btnFollow.setOnClickListener {
+            val isFollow= InteractionPresenter.toggleFollowUser(feed?.author?.userId!!)
+            if (isFollow){
+                binding.fullscreenAuthorInfo.btnFollow.text="已关注"
+            }else{
+                binding.fullscreenAuthorInfo.btnFollow.text="关注"
+            }
+        }
+        binding.authorInfo.authorAvatar.setOnClickListener(this)
+        binding.authorInfo.btnFollow.setOnClickListener(this)
+        //视频底部评论评论框
+        mInateractionBinding.inputView.setOnClickListener(this)
+        mInateractionBinding.btnLike.setOnClickListener(this)
+        mInateractionBinding.btnCollect.setOnClickListener(this)
+        mInateractionBinding.btnShare.setOnClickListener(this)
+
+    }
+
+    private fun setViewAppearance(fullScreen: Boolean) {
+        binding.fullscreen = fullScreen
+        mInateractionBinding.fullscreen = fullScreen
+        binding.fullscreenAuthorInfo.root.visibility = if (fullScreen) View.VISIBLE else View.GONE
+        //底部互动区域的高度
+        val inputHeight = mInateractionBinding.root.measuredHeight
+        //底部互动区域的bottom值
+        val inputBottom=mInateractionBinding.root. bottom
+        //播放控制器的高度
+        val ctrlViewHeight = binding.playerView.playController!!.measuredHeight
+        //播放控制器的bottom值
+        val bottom = binding.playerView.playController!!.bottom
+        //全屏播放时，播放控制器需要处在底部互动区域的上面
+        binding.playerView.playController!!.y =
+            if (fullScreen) (inputBottom - inputHeight - ctrlViewHeight).toFloat() else (bottom - ctrlViewHeight).toFloat()
+        mInateractionBinding.inputView.setBackgroundResource(
+            if (fullScreen) R.drawable.bg_edit_view2 else R.drawable.bg_edit_view)
+    }
+
+    override fun getViewBinding(): LayoutFeedDetailTypeVideoBinding {
+        return DataBindingUtil.setContentView(this, R.layout.layout_feed_detail_type_video)
+    }
+
+    override fun getViewModel(): FeedDetailViewModel {
+        return ViewModelProvider(this).get(FeedDetailViewModel::class.java)
+    }
+
+    override fun addObserve() {
+        super.addObserve()
+        mViewModel!!.commentList.observe(this) {
+            if (it.isEmpty()) {
+                binding.recyclerView.visibility = View.GONE
+                binding.emptyView.visibility = View.VISIBLE
+//                binding.refreshLayout.setEnableLoadMore(false)
+//                binding.refreshLayout.setEnableRefresh(false)
+            }
+            if (adapter == null) {
+                adapter = FeedCommentAdapter(ArrayList())
+                adapter!!.addData(it)
+                adapter!!.addChildClickViewIds(R.id.comment_like)
+                adapter!!.addChildClickViewIds(R.id.comment_author_avatar)
+                adapter!!.setOnItemChildClickListener { _, view, position ->
+                    when (view.id) {
+                        R.id.comment_like -> {
+                            mViewModel?.commentLike(adapter!!.data[position].commentId!!)
+                            println("喜欢评论：${mViewModel!!.isLike}")
+                            adapter!!.data[position].ugc!!.hasLiked=mViewModel!!.isLike
+                            if (mViewModel!!.isLike) {
+                                adapter!!.data[position].ugc!!.likeCount =
+                                    adapter!!.data[position].ugc!!.likeCount!!.plus(
+                                        1
+                                    )
+                            } else {
+                                adapter!!.data[position].ugc!!.likeCount =
+                                    adapter!!.data[position].ugc!!.likeCount?.minus(
+                                        1
+                                    )
+                            }
+                            adapter!!.notifyItemChanged(position, "commentAdd")
+                        }
+                        R.id.comment_author_avatar -> {
+                            val intent = Intent(this, ProfileActivity::class.java)
+                            intent.putExtra("USERID", adapter!!.data[position].userId)
+                            startActivity(intent)
+                        }
+                    }
+                }
+                binding.recyclerView.layoutManager = object : LinearLayoutManager(this) {
+                    override fun canScrollVertically(): Boolean {
+                        return true
+                    }
+                }
+                binding.recyclerView.adapter = adapter
+            } else {
+                adapter!!.setNewInstance(it.toMutableList())
+            }
+        }
+        mViewModel!!.loadMoreList.observe(this) {
+            adapter!!.addData(it)
+        }
+    }
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        backPressd=true
+        binding.playerView.playController!!.translationY=0f
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(!backPressd){
+            binding.playerView.inActive()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        backPressd=false
+        binding.playerView.onActive()
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.btn_like->{
+                InteractionPresenter.toggleFeedLikeInternal(feed!!)
+            }
+            R.id.btn_collect->{
+                InteractionPresenter.toggleFeedFeedFavorite(feed!!)
+            }
+            R.id.btn_share->{
+                InteractionPresenter.openShare(this,feed!!)
+            }
+            R.id.input_view->{
+                val commentDialog = CommentDialog()
+                commentDialog.itemId = feed?.itemId
+                commentDialog.show(supportFragmentManager, "commentDialog")
+            }
+            R.id.author_avatar->{
+                val intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("USERID", binding.feed?.authorId)
+                startActivity(intent)
+            }
+            R.id.btn_follow->{
+                val isFollow= InteractionPresenter.toggleFollowUser(feed?.author?.userId!!)
+                if (isFollow){
+                    binding.authorInfo.btnFollow.text="已关注"
+                }else{
+                    binding.authorInfo.btnFollow.text="关注"
+                }
+            }
+        }
+        if(v?.id==R.id.btn_like||v?.id==R.id.btn_collect){
+            val intent = Intent().apply {
+                putExtra("KEY_UGC",feed?.ugc)
+                putExtra("KEY_POSITION",position)
+            }
+            setResult(Activity.RESULT_OK,intent)
+        }
+    }
+}

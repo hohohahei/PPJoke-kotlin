@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.ppjoke.ui.detail.FeedDetailViewModel" />
+
+        <variable
+            name="feed"
+            type="com.example.ppjoke.bean.FeedBean" />
+
+        <import type="com.blankj.utilcode.util.ConvertUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.detail.FeedDetailActivity">
+
+        <include
+            android:id="@+id/barLayout"
+            layout="@layout/layout_toolbar" />
+
+        <include
+            android:id="@+id/author_info_layout"
+            layout="@layout/layout_feed_detail_type_image_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:feed="@{feed}"
+            app:layout_constraintTop_toBottomOf="@id/barLayout" />
+
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/interaction_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/author_info_layout"
+            app:srlEnableLoadMore="true"
+            app:srlEnableRefresh="true">
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <include
+                        layout="@layout/layout_feed_text"
+                        app:feedText="@{feed.feeds_text}"
+                        app:lines="@{1000}" />
+
+                    <com.example.ppjoke.widget.PPImageView
+                        android:id="@+id/header_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/dp_10" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                       />
+
+                    <com.example.ppjoke.widget.EmptyView
+                        android:id="@+id/emptyView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <com.scwang.smart.refresh.footer.BallPulseFooter
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+
+        <include
+            android:id="@+id/interaction_layout"
+            layout="@layout/layout_feed_detail_bottom_inateraction"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_48"
+            app:feed="@{feed}"
+            app:fullscreen="@{false}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

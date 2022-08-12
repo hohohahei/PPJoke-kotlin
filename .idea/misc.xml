@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/bg_edit_view.xml" value="0.139" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/ic_outer_circle.xml" value="0.1585" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/ic_photo.xml" value="0.1585" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/ic_shutter.xml" value="0.1585" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/ic_shutter_focused.xml" value="0.1585" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/ic_shutter_normal.xml" value="0.1585" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/ic_shutter_pressed.xml" value="0.1585" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/ic_switch.xml" value="0.1585" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/shape_10dp_corners.xml" value="0.159" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/drawable/shape_top_radius_20dp.xml" value="0.1605" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/activity_capture.xml" value="0.12916666666666668" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/activity_feed_detail.xml" value="0.1109375" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/activity_layout_capture.xml" value="0.12916666666666668" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/activity_login.xml" value="0.18342391304347827" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/activity_main.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/activity_preview.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/activity_profile.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/activity_tag_detail.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/camera_ui_container.xml" value="0.18568840579710144" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/fragment_couch.xml" value="0.14583333333333334" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/fragment_couch_item.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/fragment_discover.xml" value="0.1171875" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/fragment_feed.xml" value="0.1" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/fragment_focus_on.xml" value="0.1578125" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/fragment_home.xml" value="0.1171875" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/fragment_my.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/fragment_recommend.xml" value="0.1578125" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_bottom_share_dialog.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_comment_dialog.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_empty_view.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_exo_player_controller_view.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_exo_player_view.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_author.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_comment_list_item.xml" value="0.16302083333333334" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_detail_author_info.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_detail_bottom_inateraction.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_detail_type_image_header.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_detail_type_video.xml" value="0.1859375" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_detail_type_video_header.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_interaction.xml" value="0.16" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_tag.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_text.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_top_comment.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_type_image.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_type_text.xml" value="0.18342391304347827" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_feed_type_video.xml" value="0.15364583333333334" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_player_view.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_refresh_view.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_share_item.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_simple_exo_player_controller_view.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_simple_exo_player_view.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_tag_feed.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_tag_feed_list_header.xml" value="0.19021739130434784" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_tag_list_item.xml" value="0.15677083333333333" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/layout/layout_toolbar.xml" value="0.18659420289855072" />
+        <entry key="..\:/testProject/PPJoke/app/src/main/res/menu/bottom_nav_menu.xml" value="0.21302083333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

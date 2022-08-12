@@ -1,0 +1,4 @@
+
+rootProject.name = "PPJoke"
+include ':app'
+include ':base'
