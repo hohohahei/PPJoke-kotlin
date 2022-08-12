@@ -18,12 +18,6 @@ open class BaseRepository {
         return withContext(Dispatchers.IO) {
             call.invoke()
         }.apply {
-//            if (this is BaseBean<*>) {
-//                if (!isSuccess()) {
-//                    throw ApiException(msg, code)
-//                }
-//            }
-//            this
         }
     }
 

@@ -9,11 +9,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.ppjoke.databinding.ActivityMainBinding
 import com.example.ppjoke.ext.saveAs
-import com.example.ppjoke.navigator.FixFragmentNavigator
 import com.example.ppjoke.ui.couch.CouchFragment
 import com.example.ppjoke.ui.discover.DiscoverFragment
 import com.example.ppjoke.ui.feed.FeedFragment
-import com.example.ppjoke.ui.home.HomeFragment
 import com.example.ppjoke.ui.my.MyFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xtc.base.utils.toastShort

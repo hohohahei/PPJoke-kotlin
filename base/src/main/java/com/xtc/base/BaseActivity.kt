@@ -71,47 +71,21 @@ abstract class BaseActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(false)
     }
 
-    private var myScanReceiver: MyScanReceiver? = null
-
-    open fun startScanReceiver(OnScanListener: MyScanReceiver.OnScanListener?) {
-        myScanReceiver = MyScanReceiver()
-        if (OnScanListener != null) {
-            myScanReceiver!!.setOnMessageListener(OnScanListener)
-        }
-        val intentFilter = IntentFilter()
-        intentFilter.addAction("jlqx.intent.SCAN")
-        intentFilter.addAction("unitech.scanservice.data")
-        intentFilter.addCategory("com.symbol.category.DEFAULT")
-        registerReceiver(myScanReceiver, intentFilter)
-    }
 
 
-    fun unRegisterScanReceiver() {
-        if (myScanReceiver != null) {
-            unregisterReceiver(myScanReceiver)
-            myScanReceiver = null
-        }
-    }
 
     override fun onResume() {
         super.onResume()
-        startScanReceiver(object : MyScanReceiver.OnScanListener {
-            override fun setMsg(msg: String?) {
-                onScanResult(msg)
-            }
 
-        })
     }
 
     override fun onStop() {
         super.onStop()
-        unRegisterScanReceiver()
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
-        unRegisterScanReceiver()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
