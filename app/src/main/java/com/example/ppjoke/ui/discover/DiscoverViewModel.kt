@@ -18,10 +18,10 @@ class DiscoverViewModel : HomeViewModel() {
     val tagLoadMoreList=MutableLiveData<List<TagBean>>()
     var tagHasFollow=MutableLiveData<Boolean>()
 
-    fun getTagList(isLoadMore:Boolean=false,tagId: Int=0,tagType:String="all"){
+    fun getTagList(isLoadMore:Boolean=false,tagId: Int=0,tagType:String="all",pageCount:Int=10){
         isLoading.value=true
         launch {
-            val response=repo.queryTagList(tagType,tagId,userId?:0)
+            val response=repo.queryTagList(tagType,tagId,userId?:0,pageCount)
             if(isLoadMore){
                 tagLoadMoreList.value=response.data
             }else {

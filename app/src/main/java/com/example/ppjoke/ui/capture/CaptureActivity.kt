@@ -2,6 +2,9 @@ package com.example.ppjoke.ui.capture
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaScannerConnection
@@ -9,6 +12,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.FileUtils
+import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import android.webkit.MimeTypeMap
@@ -20,27 +25,29 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
-import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.example.ppjoke.R
 import com.example.ppjoke.databinding.ActivityCaptureBinding
-import com.example.ppjoke.widget.dialog.CommentDialog
+import com.example.ppjoke.widget.RecordView
 import com.example.ppjoke.widget.dialog.CommentDialog.Companion.REQ_ALBUM
 import com.xtc.base.BaseMvvmActivity
+import com.xtc.base.utils.toastShort
 import com.yalantis.ucrop.UCrop
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.jvm.internal.Intrinsics
+import kotlin.math.roundToInt
 
 
 class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewModel>() {
     private var imageCapture: ImageCapture? = null
-    private var videoCapture: VideoCapture? = null
+    private lateinit var videoCapture: VideoCapture
     private var takingPicture = false
     private var outputFilePath: String? = null
     private val deniedPermission = ArrayList<String>()
@@ -57,7 +64,8 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
     private var camera: Camera? = null
     private lateinit var broadcastManager: LocalBroadcastManager
     private var displayId: Int = -1
-
+    private val RECORDED_FILE_NAME = "recorded_video"
+    private val RECORDED_FILE_NAME_END = "video/mp4"
 
     companion object {
         private const val TAG = "CaptureActivity"
@@ -79,10 +87,12 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
     override fun initView(savedInstanceState: Bundle?) {
         binding.lifecycleOwner = this
         binding.viewModel = mViewModel
+        binding.listener=RecordListener()
         cameraExecutor = Executors.newSingleThreadExecutor()
         broadcastManager = LocalBroadcastManager.getInstance(this)
         ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_CODE)
         binding.photoViewButton.setOnClickListener {
+            takingPicture=true
             openAlbum()
         }
 
@@ -121,9 +131,6 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
                     // Keep track of the display in which this view is attached
                     displayId = binding.viewFinder.display.displayId
 
-                    // Build UI controls
-                    updateCameraUi()
-
                     // Set up the camera and its use cases
                     setUpCamera()
                 }
@@ -150,82 +157,6 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
         }
     }
 
-    /** Method used to re-draw the camera UI controls, called every time configuration changes. */
-    private fun updateCameraUi() {
-
-        // Listener for button used to capture photo
-        binding.cameraCaptureButton.setOnClickListener {
-            takingPicture = true
-
-            // Get a stable reference of the modifiable image capture use case
-            imageCapture?.let { imageCapture ->
-
-                // Create output file to hold the image
-                val photoFile=  File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                    System.currentTimeMillis().toString() + ".jpg"
-                )
-
-                // Setup image capture metadata
-                val metadata = Metadata().apply {
-
-                    // Mirror image when using the front camera
-                    isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
-                }
-
-                // Create output options object which contains file + metadata
-                val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
-                    .setMetadata(metadata)
-                    .build()
-
-                // Setup image capture listener which is triggered after photo has been taken
-                imageCapture.takePicture(
-                    outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
-                        override fun onError(exc: ImageCaptureException) {
-                            Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-                        }
-
-                        override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                            val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
-                            Log.d(TAG, "Photo capture succeeded: $savedUri")
-
-                            // We can only change the foreground Drawable using API level 23+ API
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                // Update the gallery thumbnail with latest picture taken
-                              //  setGalleryThumbnail(savedUri)
-                               // onFileSaved(photoFile)
-                                doCrop(savedUri)
-                            }
-
-
-                            // Implicit broadcasts will be ignored for devices running API level >= 24
-                            // so if you only target API level 24+ you can remove this statement
-//                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-//                                this@CaptureActivity.sendBroadcast(
-//                                    Intent(Camera.ACTION_NEW_PICTURE, savedUri)
-//                                )
-//                            }
-
-                            // If the folder selected is an external media directory, this is
-                            // unnecessary but otherwise other apps will not be able to access our
-                            // images unless we scan them using [MediaScannerConnection]
-                            val mimeType = MimeTypeMap.getSingleton()
-                                .getMimeTypeFromExtension(savedUri.toFile().extension)
-                            MediaScannerConnection.scanFile(
-                                this@CaptureActivity,
-                                arrayOf(savedUri.toFile().absolutePath),
-                                arrayOf(mimeType)
-                            ) { _, uri ->
-                                Log.d(TAG, "Image capture scanned into media store: $uri")
-                            }
-                        }
-                    })
-
-                // We can only change the foreground Drawable using API level 23+ API
-
-            }
-        }
-    }
 
     /** Initialize CameraX, and prepare to bind the camera use cases  */
     @RequiresApi(Build.VERSION_CODES.R)
@@ -309,12 +240,17 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
             }
 
         cameraProvider.unbindAll()
-
+        val useCaseGroup = UseCaseGroup.Builder()
+            .addUseCase(mPreview)
+         //  .addUseCase(imageAnalyzer!!)
+            .addUseCase(imageCapture!!)
+            .addUseCase(videoCapture!!)
+            .build()
         try {
             // A variable number of use-cases can be passed here -
             // camera provides access to CameraControl & CameraInfo
             camera = cameraProvider.bindToLifecycle(
-                this, mCameraSelector, mPreview, imageCapture, imageAnalyzer)
+                this, mCameraSelector, useCaseGroup)
             mPreview.setSurfaceProvider(binding.viewFinder.surfaceProvider)
 
         } catch (exc: Exception) {
@@ -422,5 +358,151 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
         super.onDestroy()
         cameraExecutor.shutdown()
     }
+
+    inner class RecordListener:RecordView.onRecordListener{
+        override fun onClick() {
+            takingPicture = true
+
+            // Get a stable reference of the modifiable image capture use case
+            imageCapture?.let { imageCapture ->
+
+                // Create output file to hold the image
+                val photoFile=  File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                    System.currentTimeMillis().toString() + ".jpg"
+                )
+
+                // Setup image capture metadata
+                val metadata = Metadata().apply {
+                    // Mirror image when using the front camera
+                    isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+                }
+
+                // Create output options object which contains file + metadata
+                val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
+                    .setMetadata(metadata)
+                    .build()
+
+                // Setup image capture listener which is triggered after photo has been taken
+                imageCapture.takePicture(
+                    outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+                        override fun onError(exc: ImageCaptureException) {
+                            Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                        }
+
+                        override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                            val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
+                            Log.d(TAG, "Photo capture succeeded: $savedUri")
+
+                            // We can only change the foreground Drawable using API level 23+ API
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                // Update the gallery thumbnail with latest picture taken
+                                //  setGalleryThumbnail(savedUri)
+                                // onFileSaved(photoFile)
+                                doCrop(savedUri)
+                            }
+                            // If the folder selected is an external media directory, this is
+                            // unnecessary but otherwise other apps will not be able to access our
+                            // images unless we scan them using [MediaScannerConnection]
+                            val mimeType = MimeTypeMap.getSingleton()
+                                .getMimeTypeFromExtension(savedUri.toFile().extension)
+                            MediaScannerConnection.scanFile(
+                                this@CaptureActivity,
+                                arrayOf(savedUri.toFile().absolutePath),
+                                arrayOf(mimeType)
+                            ) { _, uri ->
+                                Log.d(TAG, "Image capture scanned into media store: $uri")
+                            }
+                        }
+                    })
+
+                // We can only change the foreground Drawable using API level 23+ API
+
+            }
+        }
+
+        @SuppressLint("RestrictedApi")
+        override fun onLongClick() {
+            println("开始了录制")
+            takingPicture=false
+            // Create output file to hold the image
+            val videoFile=  File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                System.currentTimeMillis().toString() + ".mp4"
+            )
+            val contentValues=ContentValues()
+            contentValues.put(
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                RECORDED_FILE_NAME + "_" + System.currentTimeMillis()
+            )
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE,RECORDED_FILE_NAME_END)
+
+            val outputFileOptions = VideoCapture.OutputFileOptions.Builder(
+                contentResolver,
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues
+            ).build()
+            println("文件名称：")
+            if (ActivityCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                toastShort("请先允许相关权限获取！")
+                false
+            }
+            videoCapture.startRecording(outputFileOptions,cameraExecutor,object :VideoCapture.OnVideoSavedCallback{
+                @RequiresApi(Build.VERSION_CODES.Q)
+                override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
+                    println("录制成功")
+                   val file= uriToFileApiQ(outputFileResults.savedUri,this@CaptureActivity)
+                    if (file != null) {
+                        onFileSaved(file)
+                    }
+                }
+
+                override fun onError(videoCaptureError: Int, message: String, cause: Throwable?) {
+                    Log.e(TAG, "Video capture failed: $message",cause)
+                }
+
+            })
+            true
+        }
+
+        @SuppressLint("RestrictedApi")
+        override fun onFinish() {
+            videoCapture.stopRecording()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun uriToFileApiQ(uri: Uri?, context: Context): File? {
+        var file: File? = null
+        if (uri == null) return file
+        //android10以上转换
+        if (uri.scheme == ContentResolver.SCHEME_FILE) {
+            file = File(uri.path)
+        } else if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+            //把文件复制到沙盒目录
+            val contentResolver: ContentResolver = context.contentResolver
+            val displayName: String =
+                ((System.currentTimeMillis() + ((Math.random() + 1) * 1000).roundToInt()).toString()
+                        + "." + MimeTypeMap.getSingleton()
+                    .getExtensionFromMimeType(contentResolver.getType(uri)))
+            try {
+                val inputStream: InputStream? = contentResolver.openInputStream(uri)
+                val cache: File = File(context.cacheDir.absolutePath, displayName)
+                val fos = FileOutputStream(cache)
+                FileUtils.copy(inputStream!!, fos)
+                file = cache
+                fos.close()
+                inputStream.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return file
+    }
+
+
 
 }

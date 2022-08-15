@@ -32,12 +32,13 @@ class FeedMultAdapter(
                 )
             }
             VIDEO -> {
+                println("视频类型：${item.cover} ${item.url}")
                 val bindVideo = DataBindingUtil.bind<LayoutFeedTypeVideoBinding>(holder.itemView)
                 bindVideo!!.feed = item
                 bindVideo.listPlayerView.bindData(
                     feedCategory,
-                    item.width ?: 0,
-                    item.height ?: 0,
+                    item.width ?: 720,
+                    item.height ?: 1280,
                     item.cover,
                     item.url
                 )

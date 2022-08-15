@@ -13,6 +13,7 @@ import com.example.ppjoke.ui.couch.CouchFragment
 import com.example.ppjoke.ui.discover.DiscoverFragment
 import com.example.ppjoke.ui.feed.FeedFragment
 import com.example.ppjoke.ui.my.MyFragment
+import com.example.ppjoke.ui.publish.PublishFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xtc.base.utils.toastShort
 import kotlin.system.exitProcess
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private val homeFragment = FeedFragment.newInstance(feedType = FeedFragment.FEED_TAG_VIDEO, type = FeedFragment.TYPE_COUCH)
     private val couchFragment = CouchFragment()
+    private val publishFragment=PublishFragment()
     private val discoverFragment = DiscoverFragment()
     private val myFragment = MyFragment()
 
@@ -58,6 +60,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_couch -> {
                     showFragment(couchFragment)
                 }
+                R.id.navigation_publish->{
+                    showFragment(publishFragment)
+                }
                 R.id.navigation_discover -> {
                     showFragment(discoverFragment)
                 }
@@ -78,12 +83,16 @@ class MainActivity : AppCompatActivity() {
             .add(R.id.fragment_container_view, couchFragment, "navigation_cover")
             .setMaxLifecycle(couchFragment, Lifecycle.State.STARTED).hide(couchFragment).commit()
         supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container_view,publishFragment,"navigation_publish")
+            .setMaxLifecycle(publishFragment,Lifecycle.State.STARTED).hide(publishFragment).commit()
+        supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container_view, discoverFragment, "navigation_discover")
             .setMaxLifecycle(discoverFragment, Lifecycle.State.STARTED).hide(discoverFragment)
             .commit()
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container_view, myFragment, "navigation_my")
             .setMaxLifecycle(myFragment, Lifecycle.State.STARTED).hide(myFragment).commit()
+
     }
 
     private fun showFragment(fragment: Fragment) {

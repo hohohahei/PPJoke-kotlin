@@ -146,6 +146,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                 if (adapter == null) {
                     adapter = FeedMultAdapter(it.toMutableList(), feedType ?: "feed_fragment",playDetector)
                     adapter!!.setOnItemClickListener { _, _, position ->
+                        println("类型 ${adapter!!.data[position].itemType}")
                         if(adapter!!.data[position].itemType!=2) {
                             val intent = Intent(activity, FeedDetailActivity::class.java)
                             intent.putExtra("KEY_FEED", adapter!!.data[position])

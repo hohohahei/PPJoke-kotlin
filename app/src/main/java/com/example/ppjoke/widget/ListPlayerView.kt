@@ -128,7 +128,6 @@ open class ListPlayerView @JvmOverloads constructor(
         pageListPlay.switchPlayerView(playerView, true)
         val parent = playerView.parent
         if (parent !== this) {
-
             //把展示视频画面的View添加到ItemView的容器上
             if (parent != null) {
                 (parent as ViewGroup).removeView(playerView)

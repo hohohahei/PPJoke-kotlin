@@ -8,6 +8,9 @@
         <variable
             name="viewModel"
             type="com.example.ppjoke.ui.capture.CaptureViewModel" />
+        <variable
+            name="listener"
+            type="com.example.ppjoke.ui.capture.CaptureActivity.RecordListener" />
     </data>
     <FrameLayout
         android:layout_width="match_parent"
@@ -49,6 +52,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="@dimen/dp_60"
             app:duration="10"
+            onRecordListener="@{listener}"
             app:fill_color="@color/color_white"
             app:progress_color="@color/color_theme"
             app:progress_width="@dimen/dp_4"

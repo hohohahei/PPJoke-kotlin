@@ -25,6 +25,8 @@ object ApiUrl {
     const val TOGGLE_SHARE="ugc/increaseShareCount"
     //帖子收藏
     const val TOGGLE_FAVORITE="ugc/toggleFavorite"
+    //帖子发布
+    const val FEED_PUBLISH="feeds/publish"
     //用户关注
     const val TOGGLE_USER_FOLLOW="ugc/toggleUserFollow"
     //添加评论

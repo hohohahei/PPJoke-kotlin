@@ -19,7 +19,7 @@ class MyApplication:Application() {
         XPopup.setPrimaryColor(ContextCompat.getColor(this, R.color.color_theme))
         Utils.init(this)
         MMKV.initialize(this)
-        MMKVUtils.getInstance().putUserId(1581251163)
+        MMKVUtils.getInstance().putUserId(1581251163)  //因为登录功能还没实现，暂时先存个userId用
         LiveEventBus
             .config()
             .lifecycleObserverAlwaysActive(true)

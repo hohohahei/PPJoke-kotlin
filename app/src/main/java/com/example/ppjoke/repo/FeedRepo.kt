@@ -30,4 +30,11 @@ class FeedRepo:BaseRepository() {
         RetrofitManager.instance.getApi.shareFeed(itemId).data()
     }
 
+    suspend fun publishFeed(coverUploadUrl:String, fileUploadUrl:String, width:Int=0,
+                            height:Int=0, userId: Long,tagId: Int,tagTitle:String,inputText:String, feedType: Int)=request{
+
+         RetrofitManager.instance.getApi.feedPublish(coverUploadUrl,fileUploadUrl,width,height,
+             userId,tagId,tagTitle,inputText,feedType).data()
+    }
+
 }

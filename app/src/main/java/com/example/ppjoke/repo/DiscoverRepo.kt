@@ -5,8 +5,8 @@ import com.xtc.base.http.BaseRepository
 
 
 class DiscoverRepo:BaseRepository() {
-    suspend fun queryTagList(tagType:String,tagId: Int,userId:Long)=request{
-        RetrofitManager.instance.getApi.queryTagList(tagType=tagType,tagId=tagId, userId = userId).data()
+    suspend fun queryTagList(tagType:String,tagId: Int,userId:Long,pageCount:Int)=request{
+        RetrofitManager.instance.getApi.queryTagList(tagType=tagType,tagId=tagId, userId = userId, pageCount = pageCount).data()
     }
 
     suspend fun toggleTagFollow(userId: Long,tagId: Int)=request {

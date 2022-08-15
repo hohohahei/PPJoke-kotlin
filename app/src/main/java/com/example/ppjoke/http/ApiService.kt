@@ -102,4 +102,18 @@ interface ApiService {
         @Query("userId") userId: Long,
         @Query("tagId") tagId: Int
     ):BaseBean<BaseResponse<ToggleFollowResponse>>
+
+    @FormUrlEncoded
+    @POST(ApiUrl.FEED_PUBLISH)
+    suspend fun feedPublish(
+        @Field("coverUrl",encoded = true) coverUrl:String,
+        @Field("fileUrl",encoded = true) fileUrl:String,
+        @Field("fileWidth") width:Int,
+        @Field("fileHeight") height:Int,
+        @Field("userId") userId: Long,
+        @Field("tagId") tagId: Int,
+        @Field("tagTitle",encoded = true) tagTitle:String,
+        @Field("feedText",encoded = true) inputText:String,
+        @Field("feedType") feedType:Int,
+    ):BaseBean<BaseResponse<ToggleResultResponse>>
 }
