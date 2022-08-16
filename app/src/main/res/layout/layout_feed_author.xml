@@ -68,5 +68,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+<!--        <Spinner-->
+<!--            android:id="@+id/sinner_more"-->
+<!--            android:layout_width="@dimen/dp_30"-->
+<!--            android:layout_height="match_parent"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:background="@drawable/ic_more"-->
+<!--            android:entries="@array/spinner_more_item"-->
+<!--            android:dropDownVerticalOffset="28dp"-->
+<!--            />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

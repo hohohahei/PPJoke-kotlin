@@ -19,18 +19,22 @@ object ApiUrl {
     const val TOGGLE_FEED_LIKE = "ugc/toggleFeedLike"
 
     const val TOGGLE_FEED_DISS="ugc/dissFeed"
-    //评论点赞
-    const val TOGGLE_COMMENT_LIKE="ugc/toggleCommentLike"
     //帖子分享
     const val TOGGLE_SHARE="ugc/increaseShareCount"
     //帖子收藏
     const val TOGGLE_FAVORITE="ugc/toggleFavorite"
     //帖子发布
     const val FEED_PUBLISH="feeds/publish"
+    //删除帖子
+    const val FEED_DELETE="feeds/deleteFeed"
     //用户关注
     const val TOGGLE_USER_FOLLOW="ugc/toggleUserFollow"
     //添加评论
     const val ADD_COMMENT="comment/addComment"
+    //删除评论
+    const val DELETE_COMMENT="comment/deleteComment"
+    //评论点赞
+    const val TOGGLE_COMMENT_LIKE="ugc/toggleCommentLike"
     //添加用户
     const val USER_INSERT="user/insert"
     //查询用户间关系

@@ -116,4 +116,16 @@ interface ApiService {
         @Field("feedText",encoded = true) inputText:String,
         @Field("feedType") feedType:Int,
     ):BaseBean<BaseResponse<ToggleResultResponse>>
+
+    @GET(ApiUrl.FEED_DELETE)
+    suspend fun feedDelete(
+        @Query("itemId") itemId: Long
+    ):BaseBean<BaseResponse<ToggleResultBooleanResp>>
+
+    @GET(ApiUrl.DELETE_COMMENT)
+    suspend fun deleteComment(
+        @Query("itemId") itemId: Long,
+        @Query("commentId") commentId: Long,
+        @Query("userId") userId: Long
+    ):BaseBean<BaseResponse<ToggleResultBooleanResp>>
 }

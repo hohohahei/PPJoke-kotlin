@@ -1,6 +1,7 @@
 package com.example.ppjoke.ui.profile
 
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -12,6 +13,7 @@ import com.example.ppjoke.ui.feed.FeedFragment
 import com.example.ppjoke.ui.feed.FeedFragment.Companion.BEHAVIOR_FAVORITE
 import com.example.ppjoke.ui.feed.FeedFragment.Companion.TYPE_COLLECTION
 import com.example.ppjoke.ui.feed.FeedFragment.Companion.TYPE_PROFILE_FEED
+import com.example.ppjoke.utils.MMKVUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import com.xtc.base.BaseMvvmActivity
 
@@ -43,6 +45,7 @@ class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,ProfileViewModel>(
             binding.tabLayout, binding.viewPagerProfile
         ) { tab, position -> tab.text = titles[position] }
         tabLayoutMediator.attach()
+        binding.btnFollow.visibility=if(userId==MMKVUtils.getInstance().getUserId()) View.GONE else View.VISIBLE
         binding.btnFollow.setOnClickListener {
             val isFollow= InteractionPresenter.toggleFollowUser(userId!!)
             mViewModel?.userRelation?.value =isFollow

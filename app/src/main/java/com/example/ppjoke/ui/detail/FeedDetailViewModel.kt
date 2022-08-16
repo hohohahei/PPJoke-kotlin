@@ -4,8 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.ppjoke.bean.CommentBean
 import com.example.ppjoke.bean.FeedBean
 import com.example.ppjoke.repo.FeedDetailRepo
+import com.example.ppjoke.utils.MMKVUtils
 import com.xtc.base.BaseViewModel
 import kotlinx.coroutines.runBlocking
+import javax.security.auth.callback.Callback
 
 class FeedDetailViewModel:BaseViewModel() {
      private val repo by lazy { FeedDetailRepo() }
@@ -15,6 +17,7 @@ class FeedDetailViewModel:BaseViewModel() {
      val isVideo=MutableLiveData(false)
      val commentVideoImageAlpha=MutableLiveData(255)
      var isLike=false
+     var userId=MMKVUtils.getInstance().getUserId()
 
     fun getCommentList(id:Long=0,itemId:Long,isLoadMore:Boolean=false){
         isLoading.value=true
@@ -42,6 +45,16 @@ class FeedDetailViewModel:BaseViewModel() {
         launch {
             repo.addComment(itemId, commentText)
             isLoading.value=false
+        }
+    }
+
+    fun deleteComment(itemId: Long,commentId: Long,callback:(isSuccess:Boolean)->Unit){
+        launch {
+            userId?.let {
+                var response=repo.deleteComment(itemId,commentId, it)
+                callback.invoke(response.data.result)
+            }
+
         }
     }
 

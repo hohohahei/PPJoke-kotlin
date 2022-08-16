@@ -36,5 +36,8 @@ class FeedRepo:BaseRepository() {
          RetrofitManager.instance.getApi.feedPublish(coverUploadUrl,fileUploadUrl,width,height,
              userId,tagId,tagTitle,inputText,feedType).data()
     }
+    suspend fun deleteFeed(itemId: Long)= request {
+        RetrofitManager.instance.getApi.feedDelete(itemId).data()
+    }
 
 }

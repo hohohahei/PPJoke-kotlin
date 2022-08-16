@@ -35,6 +35,13 @@ class FeedViewModel:HomeViewModel() {
         }
     }
 
+    fun feedDelete(itemId:Long,callback:(isSuccess:Boolean)->Unit){
+        launch {
+            val response=repo.deleteFeed(itemId)
+            callback.invoke(response.data.result)
+        }
+    }
+
     fun  toggleFeedLikeInternal(feed: FeedBean){
         isLoading.value=true
         launch {

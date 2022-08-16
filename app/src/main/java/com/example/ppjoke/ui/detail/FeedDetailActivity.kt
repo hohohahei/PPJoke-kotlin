@@ -8,7 +8,6 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.example.ppjoke.R
 import com.example.ppjoke.adapter.FeedCommentAdapter
 import com.example.ppjoke.bean.FeedBean
@@ -16,9 +15,9 @@ import com.example.ppjoke.databinding.ActivityFeedDetailBinding
 import com.example.ppjoke.ui.binding_action.InteractionPresenter
 import com.example.ppjoke.ui.capture.PreviewActivity
 import com.example.ppjoke.ui.profile.ProfileActivity
-import com.example.ppjoke.widget.EmptyView
+import com.example.ppjoke.utils.MMKVUtils
 import com.example.ppjoke.widget.dialog.CommentDialog
-import com.jeremyliao.liveeventbus.LiveEventBus
+import com.lxj.xpopup.XPopup
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.xtc.base.BaseMvvmActivity
 import com.xtc.base.utils.toastShort
@@ -38,6 +37,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
         position=intent.getIntExtra("KEY_POSITION",-1)
         binding.feed = feed
         if (feed != null) {
+            binding.authorInfoLayout.layoutFeedDetailAuthorInfo.btnFollow.visibility= if(feed!!.author!!.userId== MMKVUtils.getInstance().getUserId()) View.GONE else View.VISIBLE
             binding.headerImage.bindData(feed!!.width ?: 0, feed!!.height ?: 0, 16, feed!!.cover)
             feed!!.itemId?.let { mViewModel?.getCommentList(itemId = it) }
         }
@@ -52,6 +52,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                 finishLoadMore(2000)
             }
         }
+
         binding.authorInfoLayout.layoutFeedDetailAuthorInfo.authorAvatar.setOnClickListener(this)
         binding.authorInfoLayout.layoutFeedDetailAuthorInfo.btnFollow.setOnClickListener(this)
         binding.interactionLayout.inputView.setOnClickListener(this)
@@ -70,11 +71,12 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                 binding.refreshLayout.setEnableRefresh(false)
             }
             if (adapter == null) {
-                adapter = FeedCommentAdapter(ArrayList())
+                adapter = FeedCommentAdapter(ArrayList(),feed!!.author!!.userId!!)
                 adapter!!.addData(it)
                 adapter!!.addChildClickViewIds(R.id.comment_like)
                 adapter!!.addChildClickViewIds(R.id.comment_author_avatar)
                 adapter!!.addChildClickViewIds(R.id.comment_cover)
+                adapter!!.addChildClickViewIds(R.id.comment_delete)
                 adapter!!.setOnItemChildClickListener { _, view, position ->
                     when (view.id) {
                         R.id.comment_like -> {
@@ -102,6 +104,28 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                             val isVideo=adapter!!.data[position].commentType==3
                             val url=if(isVideo) adapter!!.data[position].videoUrl else adapter!!.data[position].imageUrl
                             PreviewActivity.startActivityForResult(this,url,isVideo,null)
+                        }
+                        R.id.comment_delete->{
+                            val popView=XPopup.Builder(this)
+                                .hasNavigationBar(false)
+                                .isDestroyOnDismiss(true)
+                                .dismissOnTouchOutside(false)
+                                .asConfirm("提示","确定要删除该条评论？") {
+                                    mViewModel!!.deleteComment(
+                                        adapter!!.data[position].itemId!!,
+                                        adapter!!.data[position].commentId!!
+                                    ) { isSuccess ->
+                                        if (isSuccess) {
+                                            adapter!!.data.removeAt(position)
+                                            adapter!!.notifyItemRemoved(position)
+                                        }else{
+                                            toastShort("出错了，删除失败！")
+                                        }
+                                    }
+
+                                }
+                            popView.show()
+
                         }
                     }
                 }

@@ -17,4 +17,8 @@ class FeedDetailRepo:BaseRepository() {
     suspend fun addComment(itemId: Long,commentText:String)=request {
         RetrofitManager.instance.getApi.addComment(itemId,1581251163,commentText).data()
     }
+
+    suspend fun deleteComment(itemId: Long,commentId: Long,userId: Long)=request {
+        RetrofitManager.instance.getApi.deleteComment(itemId,commentId, userId).data()
+    }
 }

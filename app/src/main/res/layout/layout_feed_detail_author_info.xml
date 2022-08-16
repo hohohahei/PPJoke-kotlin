@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/dp_16"
-            android:backgroundTint="@{fullscreen? @color/transparent: @color/color_theme}"
+            android:backgroundTint="@{fullscreen? @color/transparent:feed.author.hasFollow?@color/color_999: @color/color_theme}"
             android:gravity="center"
             android:paddingLeft="@dimen/dp_16"
             android:paddingTop="@dimen/dp_5"

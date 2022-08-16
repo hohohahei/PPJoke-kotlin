@@ -16,9 +16,12 @@ import com.example.ppjoke.ui.binding_action.InteractionPresenter
 import com.example.ppjoke.ui.detail.FeedDetailActivity
 import com.example.ppjoke.ui.detail.FeedVideoDetailActivity
 import com.example.ppjoke.ui.profile.ProfileActivity
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.interfaces.OnConfirmListener
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.scwang.smart.refresh.header.BezierRadarHeader
 import com.xtc.base.BaseMvvmFragment
+import com.xtc.base.utils.toastShort
 
 private const val KEY_PROFILETYPE = "PROFILETYPE"
 private const val KEY_FEEDTYPE = "FEEDTYPE"
@@ -120,7 +123,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                     }
 
                 }
-                finishLoadMore(2000)
+                finishLoadMore(1000)
 
             }
         }
@@ -163,6 +166,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                     adapter!!.addChildClickViewIds(R.id.like)
                     adapter!!.addChildClickViewIds(R.id.favorite)
                     adapter!!.addChildClickViewIds(R.id.share)
+                    adapter!!.addChildClickViewIds(R.id.feed_delete)
                     adapter!!.setOnItemChildClickListener{_,view,position->
                         when(view.id){
                             R.id.avatar->{
@@ -180,6 +184,29 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                             }
                             R.id.share->{
                                 InteractionPresenter.openShare(requireContext(),adapter!!.data[position])
+                            }
+                            R.id.feed_delete->{
+                                val popView=XPopup.Builder(requireContext())
+                                    .hasNavigationBar(false)
+                                    .isDestroyOnDismiss(true)
+                                    .hasBlurBg(true)
+                                    .dismissOnTouchOutside(false)
+                                    .asConfirm("提示","是否删除该条帖子") {
+                                        adapter!!.data[position].itemId?.let { it1 ->
+                                            mViewModel!!.feedDelete(
+                                                it1
+
+                                            ) {isSuccess->
+                                                if(isSuccess) {
+                                                    adapter!!.data.removeAt(position)
+                                                    adapter!!.notifyItemRemoved(position)
+                                                }else{
+                                                    toastShort("出错了，删除失败！")
+                                                }
+                                            }
+                                        }
+                                    }
+                                popView.show()
                             }
                         }
 
