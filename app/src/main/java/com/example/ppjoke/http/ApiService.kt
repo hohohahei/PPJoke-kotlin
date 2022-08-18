@@ -36,13 +36,15 @@ interface ApiService {
     @GET(ApiUrl.QUERY_PROFILE_FEEDS)
     suspend fun queryProfileFeeds(
         @Query("userId") userId: Long,
-        @Query("profileType") profileType: String
+        @Query("profileType") profileType: String,
+        @Query("feedId") feedId: Int
     ):BaseBean<BaseListResponse<FeedBean>>
 
     @GET(ApiUrl.QUERY_USER_BEHAVIOR_LIST)
     suspend fun queryUserBehaviorList(
         @Query("userId") userId: Long,
-        @Query("behavior") behavior:Int
+        @Query("behavior") behavior:Int,
+        @Query("feedId") feedId: Int
     ):BaseBean<BaseListResponse<FeedBean>>
 
     @GET(ApiUrl.TOGGLE_FEED_LIKE)

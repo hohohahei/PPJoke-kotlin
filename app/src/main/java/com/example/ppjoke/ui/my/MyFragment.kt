@@ -2,17 +2,10 @@ package com.example.ppjoke.ui.my
 
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.get
 import com.example.ppjoke.R
 import com.example.ppjoke.databinding.FragmentMyBinding
-import com.example.ppjoke.ui.feed.FeedFragment
-import com.example.ppjoke.ui.feed.FeedFragment.Companion.TYPE_TAG
 import com.example.ppjoke.ui.login.LoginActivity
+import com.example.ppjoke.ui.profile.ProfileActivity
 import com.example.ppjoke.utils.MMKVUtils
 import com.xtc.base.BaseMvvmFragment
 
@@ -32,6 +25,34 @@ class MyFragment : BaseMvvmFragment<FragmentMyBinding,MyViewModel>() {
         binding?.layoutUserInfo?.setOnClickListener {
             val intent = Intent(context, LoginActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+        binding?.userFeed?.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("USERID",MMKVUtils.getInstance().getUserId())
+            intent.putExtra("ISMY",true)
+            intent.putExtra("CURRENTITEM",0)
+            startActivity(intent)
+        }
+        binding?.userComment?.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("USERID",MMKVUtils.getInstance().getUserId())
+            intent.putExtra("ISMY",true)
+            intent.putExtra("CURRENTITEM",1)
+            startActivity(intent)
+        }
+        binding?.userFavorite?.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("USERID",MMKVUtils.getInstance().getUserId())
+            intent.putExtra("ISMY",true)
+            intent.putExtra("CURRENTITEM",2)
+            startActivity(intent)
+        }
+        binding?.userHistory?.setOnClickListener {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("USERID",MMKVUtils.getInstance().getUserId())
+            intent.putExtra("ISMY",true)
+            intent.putExtra("CURRENTITEM",3)
             startActivity(intent)
         }
     }

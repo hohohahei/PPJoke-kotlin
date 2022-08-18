@@ -20,18 +20,29 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.xtc.base.BaseMvvmActivity
 
 class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,MyViewModel>() {
-    private val titles = arrayOf("帖子","收藏")
+    private val titles = mutableListOf<String>("帖子","收藏")
     private val fragmentList: MutableList<Fragment> = ArrayList()
     private var userId:Long?=null
+    private var isMy:Boolean?=null
+    private var currentItem=0
     override fun initView(savedInstanceState: Bundle?) {
         binding.viewModel=mViewModel
         binding.lifecycleOwner=this
         userId=intent.getLongExtra("USERID",0)
+        isMy=intent.getBooleanExtra("ISMY",false)
+        currentItem=intent.getIntExtra("CURRENTITEM",0)
         binding.actionBack.setOnClickListener {
             finish()
         }
+
         fragmentList.add(FeedFragment.newInstance(profileType = "tab_feed",userId=userId, type = TYPE_PROFILE_FEED))
         fragmentList.add(FeedFragment.newInstance(behavior = BEHAVIOR_FAVORITE,userId=userId, type = TYPE_COLLECTION))
+        if(isMy==true){
+            titles.add(1,"评论")
+            titles.add(3,"历史")
+            fragmentList.add(1,FeedFragment.newInstance(profileType = "tab_comment",userId=userId, type = TYPE_PROFILE_FEED))
+            fragmentList.add(3,FeedFragment.newInstance(behavior = FeedFragment.BEHAVIOR_HISTORY,userId=userId, type = FeedFragment.TYPE_HISTORY))
+        }
         binding.viewPagerProfile.adapter=object : FragmentStateAdapter(this){
             override fun getItemCount(): Int {
                 return  fragmentList.size
@@ -42,7 +53,8 @@ class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,MyViewModel>() {
             }
 
         }
-        binding.viewPagerProfile.offscreenPageLimit=2
+        binding.viewPagerProfile.offscreenPageLimit=1
+        binding.viewPagerProfile.currentItem=currentItem
         val tabLayoutMediator = TabLayoutMediator(
             binding.tabLayout, binding.viewPagerProfile
         ) { tab, position -> tab.text = titles[position] }

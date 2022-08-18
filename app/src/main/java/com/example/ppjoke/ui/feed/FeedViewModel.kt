@@ -42,7 +42,7 @@ open class FeedViewModel:BaseViewModel() {
     fun getProfileFeeds(userId:Long,profileType:String,isLoadMore: Boolean = false,feedId: Int = 0){
         isLoading.value=true
         launch {
-            val response=repo.queryProfileFeeds(userId, profileType)
+            val response=repo.queryProfileFeeds(userId, profileType,feedId)
             if (isLoadMore) {
                 loadMoreList.value = response.data
             } else {
@@ -55,7 +55,7 @@ open class FeedViewModel:BaseViewModel() {
     fun getUserBehaviorList(userId: Long,behavior:Int,isLoadMore: Boolean = false,feedId: Int = 0){
         isLoading.value=true
         launch {
-            val response=repo.queryUserBehaviorList(userId, behavior)
+            val response=repo.queryUserBehaviorList(userId, behavior,feedId)
             if (isLoadMore) {
                 loadMoreList.value = response.data
             } else {

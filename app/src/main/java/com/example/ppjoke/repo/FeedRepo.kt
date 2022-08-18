@@ -10,12 +10,12 @@ class FeedRepo:BaseRepository() {
         RetrofitManager.instance.getApi.queryFeedsList(feedType,feedId,  pageCount, userId).data()
     }
 
-    suspend fun queryProfileFeeds(userId:Long,profileType:String)=request {
-        RetrofitManager.instance.getApi.queryProfileFeeds(userId,profileType).data()
+    suspend fun queryProfileFeeds(userId:Long,profileType:String,feedId: Int)=request {
+        RetrofitManager.instance.getApi.queryProfileFeeds(userId,profileType,feedId).data()
     }
 
-    suspend fun queryUserBehaviorList(userId:Long,behavior:Int)=request {
-        RetrofitManager.instance.getApi.queryUserBehaviorList(userId,behavior).data()
+    suspend fun queryUserBehaviorList(userId:Long,behavior:Int,feedId: Int)=request {
+        RetrofitManager.instance.getApi.queryUserBehaviorList(userId,behavior,feedId).data()
     }
 
     suspend fun toggleFeedLike(userId: Long,itemId:Long)=request {

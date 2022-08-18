@@ -23,7 +23,6 @@ class FeedMultAdapter(
     BaseMultiItemQuickAdapter<FeedBean, BaseViewHolder>(data) {
 
     override fun convert(holder: BaseViewHolder, item: FeedBean) {
-
         when (holder.itemViewType) {
             TEXT,
             TEXT_IMG -> {
@@ -38,7 +37,6 @@ class FeedMultAdapter(
                 bindingImage.feedAuthor.feedDelete.visibility=if(item.author?.userId==MMKVUtils.getInstance().getUserId())View.VISIBLE else View.GONE
             }
             VIDEO -> {
-                println("视频类型：${item.cover} ${item.url}")
                 val bindVideo = DataBindingUtil.bind<LayoutFeedTypeVideoBinding>(holder.itemView)
                 bindVideo!!.feed = item
                 bindVideo.listPlayerView.bindData(

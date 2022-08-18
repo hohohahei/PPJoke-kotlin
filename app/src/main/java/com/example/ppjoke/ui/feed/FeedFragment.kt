@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.ppjoke.R
 import com.example.ppjoke.adapter.FeedMultAdapter
 import com.example.ppjoke.bean.UgcBean
@@ -28,6 +29,7 @@ private const val KEY_FEEDTYPE = "FEEDTYPE"
 private const val KEY_TYPE = "TYPE"
 private const val KEY_BEHAVIOR = "BEHAVIOR"
 private const val KEY_USERID="USERID"
+private const val KEY_LAYOUT_TYPE="KEYLAYOUTTYPE"
 class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
     private var playDetector:PageListPlayDetector?=null
     private var adapter: FeedMultAdapter? = null
@@ -36,9 +38,12 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
     private var userId: Long? = null
     private var type: Int?=null
     private var behavior: Int? = null
+    private var layoutType:Int?=null
     companion object {
         const val TYPE_PROFILE_FEED = 1001  //个人帖子
         const val TYPE_COLLECTION = 1002  //个人收藏
+        const val TYPE_COMMENT=1003  //个人评论
+        const val TYPE_HISTORY=1004  //个人历史
         const val TYPE_COUCH = 1003 //沙发页
         const val TYPE_TAG=1004 //标签页
         const val BEHAVIOR_FAVORITE = 0  //收藏
@@ -50,7 +55,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
         fun newInstance( profileType: String? = null, feedType: String? = null,
                         userId: Long? = null,
                         type: Int,
-                        behavior: Int? = null)=FeedFragment().apply {
+                        behavior: Int? = null,layoutType:Int?=null)=FeedFragment().apply {
                             arguments=Bundle().apply {
                                 putString(KEY_PROFILETYPE,profileType)
                                 putString(KEY_FEEDTYPE,feedType)
@@ -78,6 +83,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
             userId=it.getLong(KEY_USERID)
             behavior=it.getInt(KEY_BEHAVIOR)
             type=it.getInt(KEY_TYPE)
+            layoutType=it.getInt(KEY_LAYOUT_TYPE)
         }
     }
 
@@ -91,7 +97,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
             setOnRefreshListener {
                 when (type) {
                     TYPE_PROFILE_FEED -> mViewModel?.getProfileFeeds(userId!!, profileType!!)
-                    TYPE_COLLECTION -> mViewModel?.getUserBehaviorList(userId!!, behavior!!)
+                    TYPE_COLLECTION, TYPE_HISTORY -> mViewModel?.getUserBehaviorList(userId!!, behavior!!)
                     TYPE_COUCH, TYPE_TAG -> mViewModel?.getFeedList(feedType = feedType!!)
                 }
                 // mViewModel?.getFeedList()
@@ -107,7 +113,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                                 it1.id
                             )
                         }
-                        TYPE_COLLECTION -> adapter?.data?.last()?.let { it1 ->
+                        TYPE_COLLECTION, TYPE_HISTORY -> adapter?.data?.last()?.let { it1 ->
                             mViewModel?.loadMoreBehaviorList(
                                 userId!!,
                                 behavior!!,
@@ -131,7 +137,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
             if (profileType != null && type == TYPE_PROFILE_FEED) {  //查询用户动态帖子
                 mViewModel?.getProfileFeeds(userId!!, profileType!!)
             }
-            if (behavior != null && type == TYPE_COLLECTION) {  //查询用户收藏的帖子
+            if (behavior != null && type == TYPE_COLLECTION||type== TYPE_HISTORY) {  //查询用户收藏的帖子
                 mViewModel?.getUserBehaviorList(userId!!, behavior!!)
             }
         } else {
@@ -211,7 +217,11 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                         }
 
                     }
-                    binding!!.recyclerView.layoutManager = LinearLayoutManager(context)
+                    if(layoutType==1) {
+                        binding!!.recyclerView.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
+                    }else{
+                        binding!!.recyclerView.layoutManager = LinearLayoutManager(context)
+                    }
                     binding!!.recyclerView.adapter = adapter
                 } else {
                     adapter!!.setNewInstance(it.toMutableList())
