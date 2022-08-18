@@ -1,4 +1,5 @@
 package com.example.ppjoke.bean
+
 import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
@@ -6,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.example.ppjoke.BR
+import kotlinx.parcelize.Parcelize
 
 class UgcBean() : Parcelable, BaseObservable() {
     @Bindable

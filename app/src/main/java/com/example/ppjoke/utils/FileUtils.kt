@@ -25,8 +25,7 @@ object FileUtils {
         ArchTaskExecutor.getIOThreadExecutor().execute {
             val retriever = MediaMetadataRetriever()
             retriever.setDataSource(filePath)
-            //bugfix:此处应该使用{getFrameAtTime} 获取默认的第一个关键帧，手快写错
-            val frame = retriever.frameAtTime
+            val frame = retriever.frameAtTime  //getFrameAtTime 方法捕获视频帧图,用于视频的封面图
             var fos: FileOutputStream? = null
             if (frame != null) {
                 //压缩到200k以下，再存储到本地文件中

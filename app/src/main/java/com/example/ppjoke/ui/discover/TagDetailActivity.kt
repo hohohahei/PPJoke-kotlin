@@ -33,21 +33,6 @@ class TagDetailActivity : BaseMvvmActivity<ActivityTagDetailBinding,DiscoverView
                 .add(R.id.tag_detail_fragmentContainer,FeedFragment.newInstance(feedType = tagBean?.title, type = TYPE_TAG))
                 .commit()
         }
-//        binding.refreshLayout.apply {
-//            setRefreshHeader(BezierRadarHeader(context))
-//            setRefreshFooter(BallPulseFooter(context))
-//            setOnRefreshListener {
-//                mViewModel?.getFeedList()
-//                finishRefresh(2000)
-//            }
-//            setOnLoadMoreListener {
-//                if(adapter?.data?.size!! >0&&adapter?.data?.size!!%10==0) {
-//                    adapter?.data?.last()?.let { it1 -> mViewModel?.loadMore(it1.id) }
-//                }
-//                finishLoadMore(2000)
-//
-//            }
-//        }
         binding.headerIntro.headerFollow.setOnClickListener {
             tagBean?.tagId?.let { it1 -> mViewModel?.toggleTagFollow(it1) }
             binding.tagBean?.hasFollow=mViewModel!!.tagHasFollow.value
@@ -79,8 +64,6 @@ class TagDetailActivity : BaseMvvmActivity<ActivityTagDetailBinding,DiscoverView
             else{
                 adapter!!.addData(it)
             }
-//            binding.recyclerView.layoutManager= LinearLayoutManager(this)
-//            binding.recyclerView.adapter=adapter
         }
     }
 

@@ -60,7 +60,7 @@ class FileUploadManager {
             } catch (e: ServiceException) {
                 e.printStackTrace()
             }
-            return if (result != null && result.getStatusCode() === 200) {
+            return if (result != null && result.statusCode === 200) {
                 ALIYUN_BUCKET_URL + objectKey
             } else {
                 null
@@ -85,23 +85,21 @@ class FileUploadManager {
             val task = oss!!.asyncPutObject(
                 put,
                 object : OSSCompletedCallback<PutObjectRequest?, PutObjectResult?> {
-
-
                     override fun onFailure(
                         request: PutObjectRequest?,
                         clientExcepion: ClientException?,
                         serviceException: ServiceException
                     ) {
                         printError(clientExcepion, serviceException)
-                        callback?.onError(serviceException.getRawMessage())
+                        callback?.onError(serviceException.rawMessage)
                     }
 
                     override fun onSuccess(request: PutObjectRequest?, result: PutObjectResult?) {
                         val eTag: String = result!!.eTag
-                        val serverCallbackReturnBody: String = result.getServerCallbackReturnBody()
+                        val serverCallbackReturnBody: String = result.serverCallbackReturnBody
                         Log.e("PutObject", "UploadSuccess$eTag--$serverCallbackReturnBody")
                         if (callback != null && result!!.statusCode === 200) {
-                            callback.onUpload(ALIYUN_BUCKET_URL + put.getObjectKey())
+                            callback.onUpload(ALIYUN_BUCKET_URL + put.objectKey)
                         }
                     }
                 })
@@ -115,10 +113,10 @@ class FileUploadManager {
             clientExcepion?.printStackTrace()
             if (serviceException != null) {
                 // 服务异常
-                Log.e("ErrorCode", serviceException.getErrorCode())
-                Log.e("RequestId", serviceException.getRequestId())
-                Log.e("HostId", serviceException.getHostId())
-                Log.e("RawMessage", serviceException.getRawMessage())
+                Log.e("ErrorCode", serviceException.errorCode)
+                Log.e("RequestId", serviceException.requestId)
+                Log.e("HostId", serviceException.hostId)
+                Log.e("RawMessage", serviceException.rawMessage)
             }
         }
 
@@ -128,10 +126,10 @@ class FileUploadManager {
             )
             //该配置类如果不设置，会有默认配置，具体可看该类
             val conf = ClientConfiguration()
-            conf.setConnectionTimeout(15 * 1000) // 连接超时，默认15秒
-            conf.setSocketTimeout(15 * 1000) // socket超时，默认15秒
-            conf.setMaxConcurrentRequest(5) // 最大并发请求数，默认5个
-            conf.setMaxErrorRetry(2) // 失败后最大重试次数，默认2次
+            conf.connectionTimeout = 15 * 1000 // 连接超时，默认15秒
+            conf.socketTimeout = 15 * 1000 // socket超时，默认15秒
+            conf.maxConcurrentRequest = 5 // 最大并发请求数，默认5个
+            conf.maxErrorRetry = 2 // 失败后最大重试次数，默认2次
             OSSLog.disableLog() //这个开启会支持写入手机sd卡中的一份日志文件位置在SDCard_path\OSSLog\logs.csv
             oss = OSSClient(AppGlobals.getApplication(), END_POINT, credentialProvider, conf)
         }
@@ -151,7 +149,7 @@ class FileUploadManager {
                 ) {
                     // 请求异常
                     printError(clientExcepion, serviceException)
-                    callback?.onError(serviceException.getRawMessage())
+                    callback?.onError(serviceException.rawMessage)
                 }
 
                 override fun onSuccess(request: GetObjectRequest?, result: GetObjectResult?) {
