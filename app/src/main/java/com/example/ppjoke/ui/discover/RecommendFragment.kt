@@ -16,8 +16,10 @@ import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.example.ppjoke.R
 import com.example.ppjoke.adapter.TagListAdapter
+import com.example.ppjoke.bean.TagBean
 import com.example.ppjoke.databinding.FragmentRecommendBinding
 import com.example.ppjoke.ui.login.LoginActivity
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.scwang.smart.refresh.header.BezierRadarHeader
 import com.xtc.base.BaseMvvmFragment
@@ -28,14 +30,18 @@ class RecommendFragment :BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewM
         return ViewModelProvider(this).get(DiscoverViewModel::class.java)
     }
 
+
     override fun initView() {
         binding?.lifecycleOwner=this
         binding?.viewModel=mViewModel
+        LiveEventBus.get<Map<Int,Any>>("refreshRecommend").observe(this){
+            refreshItemStatus(it[0] as Int, it[1] as Boolean)
+        }
         binding!!.refreshLayout.apply {
             setRefreshHeader(BezierRadarHeader(context))
             setRefreshFooter(BallPulseFooter(context))
             setOnRefreshListener {
-                mViewModel?.getTagList()
+                refresh()
                 finishRefresh(2000)
             }
             setOnLoadMoreListener {
@@ -47,6 +53,20 @@ class RecommendFragment :BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewM
             }
         }
         mViewModel?.getTagList()
+    }
+
+    fun refresh(){
+        mViewModel?.getTagList()
+    }
+
+    private fun refreshItemStatus(tagId:Int, hasFocus:Boolean){
+        adapter!!.data.forEachIndexed { index, tagBean ->
+            if(tagBean.tagId==tagId){
+                tagBean.hasFollow=hasFocus
+                adapter!!.notifyItemChanged(index)
+                return
+            }
+        }
     }
 
     override fun addObserve() {
@@ -67,6 +87,13 @@ class RecommendFragment :BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewM
                          mViewModel!!.toggleTagFollow(adapter!!.data[position].tagId!!)
                          adapter!!.data[position].hasFollow=mViewModel!!.tagHasFollow.value
                          adapter!!.notifyItemChanged(position,"followChange")
+                         if(mViewModel!!.tagHasFollow.value == true) {
+                             LiveEventBus.get<Map<Int,Any>>("refreshFocusOn")
+                                 .post(mapOf(0 to adapter!!.data[position],1 to true))
+                         }else{
+                             LiveEventBus.get<Map<Int,Any>>("refreshFocusOn")
+                                 .post(mapOf(0 to adapter!!.data[position],1 to false))
+                         }
                      }else{
                          val intent = Intent(context, LoginActivity::class.java)
                          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -88,14 +115,24 @@ class RecommendFragment :BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewM
         return R.layout.fragment_recommend
     }
 
+
     private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ activityResult ->
         if(activityResult.resultCode == Activity.RESULT_OK){
             //回传的数据
             val backHasFollow= activityResult.data?.getBooleanExtra("KEY_FOLLOW",false)
             val backPosition=activityResult.data?.getIntExtra("KEY_POSITION",-1)
             if (backHasFollow != null&&backPosition!=null&&backPosition>=0) {
+                if(backHasFollow == true) {
+                    LiveEventBus.get<Map<Int,Any>>("refreshFocusOn")
+                        .post(mapOf(0 to adapter!!.data[backPosition],1 to true))
+
+                }else{
+                    LiveEventBus.get<Map<Int,Any>>("refreshFocusOn")
+                        .post(mapOf(0 to adapter!!.data[backPosition],1 to false))
+                }
                 adapter?.data!![backPosition].hasFollow=backHasFollow
                 adapter!!.notifyItemChanged(backPosition,"followChange")
+
             }
         }
     }

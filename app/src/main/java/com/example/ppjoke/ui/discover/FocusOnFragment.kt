@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ppjoke.R
 import com.example.ppjoke.adapter.TagListAdapter
+import com.example.ppjoke.bean.TagBean
 import com.example.ppjoke.bean.UgcBean
 import com.example.ppjoke.databinding.FragmentFocusOnBinding
 import com.example.ppjoke.databinding.FragmentRecommendBinding
 import com.example.ppjoke.ui.login.LoginActivity
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.scwang.smart.refresh.header.BezierRadarHeader
 import com.xtc.base.BaseMvvmFragment
@@ -25,11 +27,14 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
     override fun initView() {
         binding?.lifecycleOwner=this
         binding?.viewModel=mViewModel
+        LiveEventBus.get<Map<Int,Any>>("refreshFocusOn").observe(this) {
+            refreshItem(it[0] as TagBean, it[1] as Boolean)
+        }
         binding!!.refreshLayout.apply {
             setRefreshHeader(BezierRadarHeader(context))
             setRefreshFooter(BallPulseFooter(context))
             setOnRefreshListener {
-                mViewModel?.getTagList(tagType = "onlyFollow")
+                refresh()
                 finishRefresh(2000)
             }
             setOnLoadMoreListener {
@@ -45,6 +50,18 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
 
     override fun getLayoutId(): Int {
         return R.layout.fragment_recommend
+    }
+
+    fun refresh(){
+        mViewModel?.getTagList(tagType = "onlyFollow")
+    }
+
+    private fun refreshItem(tagBean: TagBean,isAdd:Boolean){
+        if (isAdd) {
+            adapter!!.addData(tagBean)
+        }else{
+            adapter!!.remove(tagBean)
+        }
     }
 
     override fun addObserve() {
@@ -63,6 +80,7 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
                 adapter!!.setOnItemChildClickListener { _, view, position ->
                     if (mViewModel!!.userId!=null) {
                         mViewModel!!.toggleTagFollow(adapter!!.data[position].tagId!!)
+                        LiveEventBus.get<Map<Int,Any>>("refreshRecommend").post(mapOf<Int,Any>(0 to adapter!!.data[position].tagId!!,1 to false))
                         adapter!!.data.removeAt(position)
                         adapter!!.notifyItemRemoved(position)
                     }else{
@@ -88,9 +106,12 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
             val backHasFollow= activityResult.data?.getBooleanExtra("KEY_FOLLOW",false)
             val backPosition=activityResult.data?.getIntExtra("KEY_POSITION",-1)
             if (backHasFollow != null&&backPosition!=null&&backPosition>=0) {
-                if(!backHasFollow){
+               if(backHasFollow!=true){
+                   LiveEventBus.get<Map<Int,Any>>("refreshRecommend")
+                       .post(mapOf(0 to adapter!!.data[backPosition].tagId!!,1 to false))
                     adapter!!.removeAt(backPosition)
                     adapter!!.notifyItemRemoved(backPosition)
+
                 }
             }
         }
