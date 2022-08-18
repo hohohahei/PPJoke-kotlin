@@ -36,22 +36,6 @@ class FeedMultAdapter(
                     item.cover
                 )
                 bindingImage.feedAuthor.feedDelete.visibility=if(item.author?.userId==MMKVUtils.getInstance().getUserId())View.VISIBLE else View.GONE
-//                bindingImage.feedAuthor.sinnerMore.adapter=ArrayAdapter.createFromResource(context,R.array.spinner_more_item,android.R.layout.simple_spinner_dropdown_item)
-//                bindingImage.feedAuthor.sinnerMore.onItemSelectedListener=object :AdapterView.OnItemSelectedListener{
-//                    override fun onItemSelected(
-//                        parent: AdapterView<*>?,
-//                        view: View?,
-//                        position: Int,
-//                        id: Long
-//                    ) {
-//                           Log.e("Adapter","点击了")
-//                    }
-//
-//                    override fun onNothingSelected(parent: AdapterView<*>?) {
-//                       println("哈哈哈哈")
-//                    }
-//
-//                }
             }
             VIDEO -> {
                 println("视频类型：${item.cover} ${item.url}")
@@ -65,22 +49,6 @@ class FeedMultAdapter(
                     item.url
                 )
                 bindVideo.feedAuthor.feedDelete.visibility=if(item.author?.userId==MMKVUtils.getInstance().getUserId())View.VISIBLE else View.GONE
-//                bindVideo.feedAuthor.sinnerMore.adapter=ArrayAdapter.createFromResource(context,R.array.spinner_more_item,android.R.layout.simple_spinner_dropdown_item)
-//                bindVideo.feedAuthor.sinnerMore.onItemSelectedListener=object :AdapterView.OnItemSelectedListener{
-//                    override fun onItemSelected(
-//                        parent: AdapterView<*>?,
-//                        view: View?,
-//                        position: Int,
-//                        id: Long
-//                    ) {
-//                        Log.e("Adapter","点击了")
-//                    }
-//
-//                    override fun onNothingSelected(parent: AdapterView<*>?) {
-//
-//                    }
-//
-//                }
             }
         }
     }

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +17,7 @@ import com.example.ppjoke.databinding.LayoutFeedDetailTypeVideoBinding
 import com.example.ppjoke.ui.binding_action.InteractionPresenter
 import com.example.ppjoke.ui.capture.PreviewActivity
 import com.example.ppjoke.ui.profile.ProfileActivity
+import com.example.ppjoke.utils.MMKVUtils
 import com.example.ppjoke.widget.dialog.CommentDialog
 import com.lxj.xpopup.XPopup
 import com.xtc.base.BaseMvvmActivity
@@ -31,7 +33,7 @@ class FeedVideoDetailActivity :
     private var position by Delegates.notNull<Int>()
     override fun initView(savedInstanceState: Bundle?) {
         binding.lifecycleOwner = this
-        feed = intent.getParcelableExtra<FeedBean>("KEY_FEED")
+        feed = intent.getParcelableExtra("KEY_FEED")
         position=intent.getIntExtra("KEY_POSITION",-1)
         binding.feed = feed
         binding.emptyView.setTitle("还没有评论，快来抢一楼吧")
@@ -63,23 +65,25 @@ class FeedVideoDetailActivity :
                 val fullscreen = binding.playerView.bottom >= binding.coordinator.bottom
                 setViewAppearance(fullscreen)
             }
+            binding.authorInfo.viewModel=mViewModel
+            binding.fullscreenAuthorInfo.viewModel=mViewModel
+            binding.authorInfo.btnFollow.visibility=if(feed!!.author!!.userId==MMKVUtils.getInstance().getUserId())View.GONE else View.VISIBLE
+            binding.fullscreenAuthorInfo.btnFollow.visibility=if(feed!!.author!!.userId==MMKVUtils.getInstance().getUserId())View.GONE else View.VISIBLE
             feed!!.itemId?.let { mViewModel?.getCommentList(itemId = it) }
+            feed!!.author!!.userId?.let { mViewModel!!.getUserRelation(it) }
         }
         binding.actionClose.setOnClickListener { finish() }
         binding.fullscreenAuthorInfo.authorAvatar.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             intent.putExtra("USERID", feed?.authorId)
-            startActivity(intent)
+            myActivityLauncher.launch(intent)
         }
         binding.fullscreenAuthorInfo.btnFollow.setOnClickListener {
             val isFollow= InteractionPresenter.toggleFollowUser(feed?.author?.userId!!)
-            if (isFollow){
-                binding.fullscreenAuthorInfo.btnFollow.text="已关注"
-            }else{
-                binding.fullscreenAuthorInfo.btnFollow.text="关注"
-            }
+            mViewModel!!.userRelation.value=isFollow
         }
         binding.authorInfo.authorAvatar.setOnClickListener(this)
+
         binding.authorInfo.btnFollow.setOnClickListener(this)
         //视频底部评论评论框
         mInateractionBinding.inputView.setOnClickListener(this)
@@ -122,8 +126,6 @@ class FeedVideoDetailActivity :
             if (it.isEmpty()) {
                 binding.recyclerView.visibility = View.GONE
                 binding.emptyView.visibility = View.VISIBLE
-//                binding.refreshLayout.setEnableLoadMore(false)
-//                binding.refreshLayout.setEnableRefresh(false)
             }
             if (adapter == null) {
                 adapter = FeedCommentAdapter(ArrayList(), feed!!.author!!.userId!!)
@@ -239,15 +241,11 @@ class FeedVideoDetailActivity :
             R.id.author_avatar->{
                 val intent = Intent(this, ProfileActivity::class.java)
                 intent.putExtra("USERID", binding.feed?.authorId)
-                startActivity(intent)
+                myActivityLauncher.launch(intent)
             }
             R.id.btn_follow->{
                 val isFollow= InteractionPresenter.toggleFollowUser(feed?.author?.userId!!)
-                if (isFollow){
-                    binding.authorInfo.btnFollow.text="已关注"
-                }else{
-                    binding.authorInfo.btnFollow.text="关注"
-                }
+                mViewModel!!.userRelation.value=isFollow
             }
         }
         if(v?.id==R.id.btn_like||v?.id==R.id.btn_collect){
@@ -256,6 +254,12 @@ class FeedVideoDetailActivity :
                 putExtra("KEY_POSITION",position)
             }
             setResult(Activity.RESULT_OK,intent)
+        }
+    }
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ activityResult ->
+        if(activityResult.resultCode == Activity.RESULT_OK){
+            val backFollow= activityResult.data?.getBooleanExtra("KEY_FOLLOW",false)
+            mViewModel?.userRelation?.value=backFollow
         }
     }
 }

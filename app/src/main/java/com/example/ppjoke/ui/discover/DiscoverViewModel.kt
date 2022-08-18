@@ -2,16 +2,12 @@ package com.example.ppjoke.ui.discover
 
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
-import com.example.ppjoke.bean.CommentBean
 import com.example.ppjoke.bean.TagBean
 import com.example.ppjoke.repo.DiscoverRepo
-import com.example.ppjoke.ui.couch.CouchViewModel
-import com.example.ppjoke.ui.home.HomeViewModel
-import com.example.ppjoke.utils.MMKVUtils
-import com.xtc.base.BaseViewModel
+import com.example.ppjoke.ui.feed.FeedViewModel
 import kotlinx.coroutines.runBlocking
 
-class DiscoverViewModel : HomeViewModel() {
+class DiscoverViewModel : FeedViewModel() {
     private val repo by lazy{DiscoverRepo()}
     val currentItem = ObservableInt()
     val tagList=MutableLiveData<List<TagBean>>()

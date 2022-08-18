@@ -233,11 +233,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
             val backUgc = activityResult.data?.getParcelableExtra<UgcBean>("KEY_UGC")
             val backPosition=activityResult.data?.getIntExtra("KEY_POSITION",-1)
             if (backUgc != null&&backPosition!=null&&backPosition>=0) {
-                adapter?.data!![backPosition].ugc.likeCount=backUgc.likeCount
-                adapter?.data!![backPosition].ugc.hasLiked=backUgc.hasLiked
-                adapter?.data!![backPosition].ugc.hasFavorite=backUgc.hasFavorite
-                adapter?.data!![backPosition].ugc.shareCount=backUgc.shareCount
-
+                adapter?.data!![backPosition].ugc=backUgc
             }
         }
     }

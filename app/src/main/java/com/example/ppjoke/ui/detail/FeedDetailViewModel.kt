@@ -1,15 +1,17 @@
 package com.example.ppjoke.ui.detail
 
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import com.example.ppjoke.bean.CommentBean
 import com.example.ppjoke.bean.FeedBean
 import com.example.ppjoke.repo.FeedDetailRepo
+import com.example.ppjoke.ui.my.MyViewModel
 import com.example.ppjoke.utils.MMKVUtils
 import com.xtc.base.BaseViewModel
 import kotlinx.coroutines.runBlocking
 import javax.security.auth.callback.Callback
 
-class FeedDetailViewModel:BaseViewModel() {
+class FeedDetailViewModel:MyViewModel() {
      private val repo by lazy { FeedDetailRepo() }
      val commentList=MutableLiveData<List<CommentBean>>()
      val loadMoreList=MutableLiveData<List<CommentBean>>()

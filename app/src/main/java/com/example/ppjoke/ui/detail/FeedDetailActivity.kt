@@ -5,18 +5,21 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ppjoke.R
 import com.example.ppjoke.adapter.FeedCommentAdapter
 import com.example.ppjoke.bean.FeedBean
+import com.example.ppjoke.bean.UgcBean
 import com.example.ppjoke.databinding.ActivityFeedDetailBinding
 import com.example.ppjoke.ui.binding_action.InteractionPresenter
 import com.example.ppjoke.ui.capture.PreviewActivity
 import com.example.ppjoke.ui.profile.ProfileActivity
 import com.example.ppjoke.utils.MMKVUtils
 import com.example.ppjoke.widget.dialog.CommentDialog
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.lxj.xpopup.XPopup
 import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.xtc.base.BaseMvvmActivity
@@ -37,9 +40,12 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
         position=intent.getIntExtra("KEY_POSITION",-1)
         binding.feed = feed
         if (feed != null) {
+            binding.authorInfoLayout.layoutFeedDetailAuthorInfo.viewModel=mViewModel
             binding.authorInfoLayout.layoutFeedDetailAuthorInfo.btnFollow.visibility= if(feed!!.author!!.userId== MMKVUtils.getInstance().getUserId()) View.GONE else View.VISIBLE
             binding.headerImage.bindData(feed!!.width ?: 0, feed!!.height ?: 0, 16, feed!!.cover)
-            feed!!.itemId?.let { mViewModel?.getCommentList(itemId = it) }
+            feed!!.itemId?.let { mViewModel?.getCommentList(itemId = it)
+            }
+            feed!!.author!!.userId?.let { mViewModel!!.getUserRelation(it) }
         }
         binding.refreshLayout.apply {
             setRefreshFooter(BallPulseFooter(context))
@@ -59,6 +65,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
         binding.interactionLayout.btnLike.setOnClickListener(this)
         binding.interactionLayout.btnCollect.setOnClickListener(this)
         binding.interactionLayout.btnShare.setOnClickListener(this)
+        binding.headerImage.setOnClickListener(this)
     }
 
     override fun addObserve() {
@@ -98,7 +105,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                         R.id.comment_author_avatar -> {
                             val intent = Intent(this, ProfileActivity::class.java)
                             intent.putExtra("USERID", adapter!!.data[position].userId)
-                            startActivity(intent)
+                            myActivityLauncher.launch(intent)
                         }
                         R.id.comment_cover->{
                             val isVideo=adapter!!.data[position].commentType==3
@@ -142,6 +149,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
         mViewModel!!.loadMoreList.observe(this) {
             adapter!!.addData(it)
         }
+
     }
 
     override fun getViewBinding(): ActivityFeedDetailBinding {
@@ -171,14 +179,16 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
             R.id.author_avatar->{
                 val intent = Intent(this, ProfileActivity::class.java)
                 intent.putExtra("USERID", binding.feed?.authorId)
-                startActivity(intent)
+                myActivityLauncher.launch(intent)
             }
             R.id.btn_follow->{
                 val isFollow = InteractionPresenter.toggleFollowUser(feed?.author?.userId!!)
-                if (isFollow) {
-                    binding.authorInfoLayout.layoutFeedDetailAuthorInfo.btnFollow.text = "已关注"
-                } else {
-                    binding.authorInfoLayout.layoutFeedDetailAuthorInfo.btnFollow.text = "关注"
+                mViewModel!!.userRelation.value=isFollow
+
+            }
+            R.id.header_image->{
+                if(feed!=null) {
+                    PreviewActivity.startActivityForResult(this, feed!!.cover, false, null)
                 }
             }
         }
@@ -188,6 +198,13 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                 putExtra("KEY_POSITION",position)
             }
             setResult(Activity.RESULT_OK,intent)
+        }
+    }
+
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ activityResult ->
+        if(activityResult.resultCode == Activity.RESULT_OK){
+            val backFollow= activityResult.data?.getBooleanExtra("KEY_FOLLOW",false)
+            mViewModel?.userRelation?.value=backFollow
         }
     }
 }

@@ -19,8 +19,9 @@
 
         <import type="com.example.ppjoke.utils.TimeUtils" />
 
-
-
+        <variable
+            name="viewModel"
+            type="com.example.ppjoke.ui.detail.FeedDetailViewModel" />
 
         <variable
             name="owner"
@@ -84,13 +85,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/dp_16"
-            android:backgroundTint="@{fullscreen? @color/transparent:feed.author.hasFollow?@color/color_999: @color/color_theme}"
+            android:backgroundTint="@{fullscreen? @color/transparent:viewModel.userRelation?@color/color_999: @color/color_theme}"
             android:gravity="center"
             android:paddingLeft="@dimen/dp_16"
             android:paddingTop="@dimen/dp_5"
             android:paddingRight="@dimen/dp_16"
             android:paddingBottom="@dimen/dp_5"
-            android:text="@{feed.author.hasFollow? @string/has_follow: @string/unfollow}"
+            android:text="@{viewModel.userRelation? @string/has_follow: @string/unfollow}"
             android:textColor="@color/color_white"
             android:textSize="@dimen/sp_14"
             app:backgroundTint="@color/color_theme"

@@ -1,5 +1,6 @@
 package com.example.ppjoke.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -13,11 +14,12 @@ import com.example.ppjoke.ui.feed.FeedFragment
 import com.example.ppjoke.ui.feed.FeedFragment.Companion.BEHAVIOR_FAVORITE
 import com.example.ppjoke.ui.feed.FeedFragment.Companion.TYPE_COLLECTION
 import com.example.ppjoke.ui.feed.FeedFragment.Companion.TYPE_PROFILE_FEED
+import com.example.ppjoke.ui.my.MyViewModel
 import com.example.ppjoke.utils.MMKVUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import com.xtc.base.BaseMvvmActivity
 
-class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,ProfileViewModel>() {
+class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,MyViewModel>() {
     private val titles = arrayOf("帖子","收藏")
     private val fragmentList: MutableList<Fragment> = ArrayList()
     private var userId:Long?=null
@@ -49,6 +51,11 @@ class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,ProfileViewModel>(
         binding.btnFollow.setOnClickListener {
             val isFollow= InteractionPresenter.toggleFollowUser(userId!!)
             mViewModel?.userRelation?.value =isFollow
+            val intent = Intent().apply {
+                putExtra("KEY_FOLLOW",isFollow)
+
+            }
+            setResult(RESULT_OK,intent)
         }
         mViewModel?.getUserInfo(userId!!)
         mViewModel?.getUserRelation(userId!!)
@@ -67,7 +74,7 @@ class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,ProfileViewModel>(
         return DataBindingUtil.setContentView(this, R.layout.activity_profile)
     }
 
-    override fun getViewModel(): ProfileViewModel {
-        return ViewModelProvider(this).get(ProfileViewModel::class.java)
+    override fun getViewModel(): MyViewModel {
+        return ViewModelProvider(this).get(MyViewModel::class.java)
     }
 }
