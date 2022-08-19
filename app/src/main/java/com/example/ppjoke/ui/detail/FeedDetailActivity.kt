@@ -88,7 +88,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                 adapter!!.setOnItemChildClickListener { _, view, position ->
                     when (view.id) {
                         R.id.comment_like -> {
-                            if(checkIsLogin(this,mViewModel!!.userId)) {
+                            if(checkIsLogin(this)) {
                                 mViewModel?.commentLike(adapter!!.data[position].commentId!!)
                                 adapter!!.data[position].ugc!!.hasLiked = mViewModel!!.isLike
                                 if (mViewModel!!.isLike) {
@@ -121,7 +121,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                                 .isDestroyOnDismiss(true)
                                 .dismissOnTouchOutside(false)
                                 .asConfirm("提示","确定要删除该条评论？") {
-                                    if(checkIsLogin(this,mViewModel!!.userId)) {
+                                    if(checkIsLogin(this)) {
                                         mViewModel!!.deleteComment(
                                             adapter!!.data[position].itemId!!,
                                             adapter!!.data[position].commentId!!
@@ -161,7 +161,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
         return DataBindingUtil.setContentView(this, R.layout.activity_feed_detail)
     }
 
-    override fun getViewModel(): FeedDetailViewModel? {
+    override fun getViewModel(): FeedDetailViewModel {
         return ViewModelProvider(this).get(FeedDetailViewModel::class.java)
     }
 

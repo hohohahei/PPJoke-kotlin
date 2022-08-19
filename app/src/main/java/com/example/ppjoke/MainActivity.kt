@@ -41,7 +41,9 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        val userId=MMKVUtils.getInstance().getUserId()
+        val isLogin=userId!=null&&userId!= 0L
+        MMKVUtils.getInstance().encode("isLogin",isLogin)
         navView = binding.navView
 
         val navHost: NavHostFragment = supportFragmentManager
@@ -50,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHost.navController
         navController.let { navView.setupWithNavController(it) }
         initFragmentAdd()
+
     }
 
 
@@ -64,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                     showFragment(couchFragment)
                 }
                 R.id.navigation_publish->{
-                    if (checkIsLogin(this, MMKVUtils.getInstance().getUserId())) {
+                    if (checkIsLogin(this)) {
                         showFragment(publishFragment)
                     }
                 }
@@ -72,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                     showFragment(discoverFragment)
                 }
                 R.id.navigation_my -> {
-                    if (checkIsLogin(this, MMKVUtils.getInstance().getUserId())) {
+                    if (checkIsLogin(this)) {
                         showFragment(myFragment)
                     }
                 }

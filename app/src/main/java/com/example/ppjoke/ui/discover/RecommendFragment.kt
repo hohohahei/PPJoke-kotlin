@@ -85,7 +85,7 @@ class RecommendFragment : BaseMvvmFragment<FragmentRecommendBinding, DiscoverVie
                 }
                 adapter!!.addChildClickViewIds(R.id.action_follow)
                 adapter!!.setOnItemChildClickListener { _, _, position ->
-                    if (checkIsLogin(requireContext(), mViewModel!!.userId)) {
+                    if (checkIsLogin(requireContext())) {
                         mViewModel!!.toggleTagFollow(adapter!!.data[position].tagId!!)
                         adapter!!.data[position].hasFollow = mViewModel!!.tagHasFollow.value
                         adapter!!.notifyItemChanged(position, "followChange")

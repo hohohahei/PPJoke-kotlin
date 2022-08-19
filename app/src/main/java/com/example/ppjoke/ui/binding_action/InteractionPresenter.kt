@@ -23,7 +23,7 @@ object InteractionPresenter {
     fun toggleFeedLikeInternal(feed: FeedBean,context: Context) {
         val userId=MMKVUtils.getInstance().getUserId()
         var isLike =false
-        if (checkIsLogin(context,userId)){
+        if (checkIsLogin(context)){
         runBlocking {
             val response = repo.toggleFeedLike(userId?:0, feed.itemId!!)
             isLike = response.data.hasLiked
@@ -40,7 +40,7 @@ object InteractionPresenter {
     fun toggleFeedFeedFavorite(feed: FeedBean,context: Context){
         val userId=MMKVUtils.getInstance().getUserId()
         var isFavorite=false
-        if (checkIsLogin(context,userId)) {
+        if (checkIsLogin(context)) {
             runBlocking {
                 val response = repo.toggleFeedFavorite(userId ?: 0, feed.itemId!!)
                 isFavorite = response.data.hasFavorite
@@ -53,7 +53,7 @@ object InteractionPresenter {
     fun toggleFollowUser(mUserId: Long,context: Context):Boolean{
         val userId=MMKVUtils.getInstance().getUserId()
         var isFollow=false
-        if (checkIsLogin(context,userId)) {
+        if (checkIsLogin(context)) {
             runBlocking {
                 val response = profileRepo.toggleUserFollowUser(userId ?: 0, mUserId)
                 isFollow = response.data.hasLiked
@@ -66,7 +66,7 @@ object InteractionPresenter {
 
     fun openShare(context: Context,feed: FeedBean){
         val userId=MMKVUtils.getInstance().getUserId()
-        if (checkIsLogin(context,userId )) {
+        if (checkIsLogin(context)) {
             var shareContent = feed.feeds_text
             if (!TextUtils.isEmpty(feed.url)) {
                 shareContent = feed.url
@@ -85,9 +85,8 @@ object InteractionPresenter {
         }
     }
 
-    fun checkIsLogin(context: Context,userId:Long?):Boolean{
-        println("这里会过？${userId} ${userId== 0L}")
-        if(userId==null||userId== 0L){
+    fun checkIsLogin(context: Context):Boolean{
+        if(MMKVUtils.getInstance().decodeBoolean("isLogin")!= true){
             val popView=XPopup.Builder(context)
                 .hasNavigationBar(false)
                 .isDestroyOnDismiss(true)

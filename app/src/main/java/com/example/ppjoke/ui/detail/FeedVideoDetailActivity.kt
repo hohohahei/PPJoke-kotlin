@@ -15,6 +15,7 @@ import com.example.ppjoke.bean.FeedBean
 import com.example.ppjoke.databinding.LayoutFeedDetailBottomInateractionBinding
 import com.example.ppjoke.databinding.LayoutFeedDetailTypeVideoBinding
 import com.example.ppjoke.ui.binding_action.InteractionPresenter
+import com.example.ppjoke.ui.binding_action.InteractionPresenter.checkIsLogin
 import com.example.ppjoke.ui.capture.PreviewActivity
 import com.example.ppjoke.ui.profile.ProfileActivity
 import com.example.ppjoke.utils.MMKVUtils
@@ -137,7 +138,7 @@ class FeedVideoDetailActivity :
                 adapter!!.setOnItemChildClickListener { _, view, position ->
                     when (view.id) {
                         R.id.comment_like -> {
-                            if(InteractionPresenter.checkIsLogin(this, mViewModel!!.userId)) {
+                            if(checkIsLogin(this)) {
                                 mViewModel?.commentLike(adapter!!.data[position].commentId!!)
                                 adapter!!.data[position].ugc!!.hasLiked = mViewModel!!.isLike
                                 if (mViewModel!!.isLike) {
@@ -171,7 +172,7 @@ class FeedVideoDetailActivity :
                                 .isDestroyOnDismiss(true)
                                 .dismissOnTouchOutside(false)
                                 .asConfirm("提示","确定要删除该条评论？") {
-                                    if(InteractionPresenter.checkIsLogin(this, mViewModel!!.userId)) {
+                                    if(checkIsLogin(this)) {
                                         mViewModel!!.deleteComment(
                                             adapter!!.data[position].itemId!!,
                                             adapter!!.data[position].commentId!!

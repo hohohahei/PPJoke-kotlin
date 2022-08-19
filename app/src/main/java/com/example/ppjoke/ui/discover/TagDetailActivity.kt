@@ -36,7 +36,7 @@ class TagDetailActivity : BaseMvvmActivity<ActivityTagDetailBinding,DiscoverView
                 .commit()
         }
         binding.headerIntro.headerFollow.setOnClickListener {
-            if (checkIsLogin(this, mViewModel!!.userId)) {
+            if (checkIsLogin(this)) {
                 tagBean?.tagId?.let { it1 -> mViewModel?.toggleTagFollow(it1) }
                 binding.tagBean?.hasFollow = mViewModel!!.tagHasFollow.value
                 val intent = Intent().apply {

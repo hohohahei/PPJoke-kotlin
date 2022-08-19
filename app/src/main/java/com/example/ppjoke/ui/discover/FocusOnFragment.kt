@@ -12,6 +12,7 @@ import com.example.ppjoke.bean.UgcBean
 import com.example.ppjoke.databinding.FragmentFocusOnBinding
 import com.example.ppjoke.databinding.FragmentRecommendBinding
 import com.example.ppjoke.ui.binding_action.InteractionPresenter
+import com.example.ppjoke.ui.binding_action.InteractionPresenter.checkIsLogin
 import com.example.ppjoke.ui.login.LoginActivity
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.scwang.smart.refresh.footer.BallPulseFooter
@@ -79,7 +80,7 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
                 }
                 adapter!!.addChildClickViewIds(R.id.action_follow)
                 adapter!!.setOnItemChildClickListener { _, view, position ->
-                        if(InteractionPresenter.checkIsLogin(requireContext(), mViewModel!!.userId)) {
+                        if(checkIsLogin(requireContext())) {
                             mViewModel!!.toggleTagFollow(adapter!!.data[position].tagId!!)
                             LiveEventBus.get<Map<Int, Any>>("refreshRecommend").post(
                                 mapOf<Int, Any>(
