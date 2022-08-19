@@ -10,7 +10,7 @@ Jetpack MVVM最佳实践 开发短视频应用 客户端
 ### 接口文档地址
 http://123.56.232.18:8080/serverdemo/swagger-ui.html
 
-###注意
+### 注意
 
 因为登录功能为完善，所以在MyApplication 中会初始化保存一个userId模仿用户已登录状态
 
