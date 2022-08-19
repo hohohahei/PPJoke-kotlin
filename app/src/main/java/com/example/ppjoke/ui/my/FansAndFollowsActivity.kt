@@ -81,7 +81,7 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
         return DataBindingUtil.setContentView(this, R.layout.activity_fans_follows)
     }
 
-    override fun getViewModel(): MyViewModel? {
+    override fun getViewModel(): MyViewModel {
         return ViewModelProvider(this).get(MyViewModel::class.java)
     }
 }

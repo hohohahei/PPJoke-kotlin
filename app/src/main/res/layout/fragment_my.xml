@@ -78,10 +78,10 @@
                     android:id="@+id/description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.userBean.description}"
+                    android:text='@{viewModel.userBean.description==null?"这个人有点懒,什么都没留下~":viewModel.userBean.description}'
                     android:textColor="@color/color_999"
                     android:textSize="@dimen/sp_12"
-                    tools:text="神秘的jetpack" />
+                    tools:text="这个人有点懒,什么都没留下~" />
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatImageView

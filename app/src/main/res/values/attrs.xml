@@ -9,6 +9,34 @@
         <attr name="duration" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="MyTextItemView">
+        <attr name="tv_title" format="string"/>
+        <attr name="tv_content" format="string"/>
+        <attr name="tv_hint" format="string"/>
+        <attr name="tv_titleTextSize" format="dimension"/>
+        <attr name="isShowDivider" format="boolean"/>
+        <attr name="isHintMode" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="MyEditTextItemView">
+        <attr name="tv_title" />
+        <attr name="edt_hint" format="string" />
+        <attr name="edt_content" format="string"/>
+        <attr name="android:inputType" />
+        <attr name="tv_titleTextSize" />
+        <attr name="isShowDivider" />
+        <attr name="isShowDel" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="MyImageItemView">
+        <attr name="tv_title" />
+        <attr name="image_url" format="string"/>
+        <attr name="tv_titleTextSize" />
+        <attr name="placeholderImage" format="reference"/>
+        <attr name="isShowDivider" />
+        />
+    </declare-styleable>
+
     <string-array name="spinner_more_item">
         <item>删除</item>
     </string-array>

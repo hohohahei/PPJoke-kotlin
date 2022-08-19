@@ -29,8 +29,7 @@ class MyFragment : BaseMvvmFragment<FragmentMyBinding, MyViewModel>() {
             mViewModel?.getUserInfo(userId!!)
         }
         binding?.layoutUserInfo?.setOnClickListener {
-            val intent = Intent(context, LoginActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val intent = Intent(context, UserInfoActivity::class.java)
             startActivity(intent)
         }
         binding?.userFeed?.setOnClickListener {

@@ -126,12 +126,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dimen_10"
                         android:layout_marginTop="@dimen/dimen_10"
-                        android:text="@{viewModel.userBean.description}"
+                        android:text='@{viewModel.userBean.description==null?"这个人有点懒,什么都没留下~":viewModel.userBean.description}'
                         android:textColor="@color/color_999"
                         android:textSize="@dimen/sp_12"
                         app:layout_constraintLeft_toRightOf="@id/author_avatar_large"
                         app:layout_constraintTop_toBottomOf="@+id/profile_info"
-                        tools:text="神秘的jetpack" />
+                        tools:text="这个人有点懒,什么都没留下~" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_follow"
