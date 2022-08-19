@@ -240,11 +240,11 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
             }
 
         cameraProvider.unbindAll()
-        val useCaseGroup = UseCaseGroup.Builder()
+        val useCaseGroup = UseCaseGroup.Builder()   //因为CameraX不能添加太多的userCase，不然会报错，只能把imageAnalyzer先给去掉
             .addUseCase(mPreview)
          //  .addUseCase(imageAnalyzer!!)
             .addUseCase(imageCapture!!)
-            .addUseCase(videoCapture!!)
+            .addUseCase(videoCapture)
             .build()
         try {
             // A variable number of use-cases can be passed here -

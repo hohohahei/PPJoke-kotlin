@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.ppjoke.AppGlobals
 import com.example.ppjoke.bean.UserBean
+import com.example.ppjoke.utils.MMKVUtils
 
 class UserManager private constructor() {
     private val userLiveData: MutableLiveData<UserBean?> = MutableLiveData<UserBean?>()
@@ -56,7 +57,8 @@ class UserManager private constructor() {
 
     fun logout() {
 //        CacheManager.delete(KEY_CACHE_USER, mUser)
-        userLiveData.setValue(null)
+        MMKVUtils.getInstance().clearAll()
+        userLiveData.value = null
         mUser = null
     }
 

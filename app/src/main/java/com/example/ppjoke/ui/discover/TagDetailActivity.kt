@@ -9,6 +9,8 @@ import com.example.ppjoke.R
 import com.example.ppjoke.adapter.FeedMultAdapter
 import com.example.ppjoke.bean.TagBean
 import com.example.ppjoke.databinding.ActivityTagDetailBinding
+import com.example.ppjoke.ui.binding_action.InteractionPresenter
+import com.example.ppjoke.ui.binding_action.InteractionPresenter.checkIsLogin
 import com.example.ppjoke.ui.detail.FeedDetailActivity
 import com.example.ppjoke.ui.detail.FeedVideoDetailActivity
 import com.example.ppjoke.ui.feed.FeedFragment
@@ -34,13 +36,15 @@ class TagDetailActivity : BaseMvvmActivity<ActivityTagDetailBinding,DiscoverView
                 .commit()
         }
         binding.headerIntro.headerFollow.setOnClickListener {
-            tagBean?.tagId?.let { it1 -> mViewModel?.toggleTagFollow(it1) }
-            binding.tagBean?.hasFollow=mViewModel!!.tagHasFollow.value
-            val intent = Intent().apply {
-                putExtra("KEY_FOLLOW",mViewModel!!.tagHasFollow.value)
-                putExtra("KEY_POSITION",position)
+            if (checkIsLogin(this, mViewModel!!.userId)) {
+                tagBean?.tagId?.let { it1 -> mViewModel?.toggleTagFollow(it1) }
+                binding.tagBean?.hasFollow = mViewModel!!.tagHasFollow.value
+                val intent = Intent().apply {
+                    putExtra("KEY_FOLLOW", mViewModel!!.tagHasFollow.value)
+                    putExtra("KEY_POSITION", position)
+                }
+                setResult(Activity.RESULT_OK, intent)
             }
-            setResult(Activity.RESULT_OK,intent)
         }
     }
 

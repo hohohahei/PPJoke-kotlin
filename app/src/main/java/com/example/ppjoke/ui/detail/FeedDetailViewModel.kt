@@ -35,18 +35,22 @@ class FeedDetailViewModel:MyViewModel() {
     }
 
     fun commentLike(commentId:Long){
-        runBlocking {
-                val response=repo.commentLike(1581251163,commentId)
-                isLike=response.data.hasLiked
-        }
+      userId?.let {
+          runBlocking {
+              val response = repo.commentLike(it, commentId)
+              isLike = response.data.hasLiked
+          }
+      }
 
     }
 
     fun addComment(itemId: Long,commentText:String){
         isLoading.value=true
         launch {
-            repo.addComment(itemId, commentText)
-            isLoading.value=false
+            userId?.let {
+                repo.addComment(itemId, commentText, it)
+                isLoading.value = false
+            }
         }
     }
 

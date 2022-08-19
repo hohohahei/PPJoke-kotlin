@@ -9,11 +9,14 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.ppjoke.databinding.ActivityMainBinding
 import com.example.ppjoke.ext.saveAs
+import com.example.ppjoke.ui.binding_action.InteractionPresenter
+import com.example.ppjoke.ui.binding_action.InteractionPresenter.checkIsLogin
 import com.example.ppjoke.ui.couch.CouchFragment
 import com.example.ppjoke.ui.discover.DiscoverFragment
 import com.example.ppjoke.ui.feed.FeedFragment
 import com.example.ppjoke.ui.my.MyFragment
 import com.example.ppjoke.ui.publish.PublishFragment
+import com.example.ppjoke.utils.MMKVUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.xtc.base.utils.toastShort
 import kotlin.system.exitProcess
@@ -61,13 +64,17 @@ class MainActivity : AppCompatActivity() {
                     showFragment(couchFragment)
                 }
                 R.id.navigation_publish->{
-                    showFragment(publishFragment)
+                    if (checkIsLogin(this, MMKVUtils.getInstance().getUserId())) {
+                        showFragment(publishFragment)
+                    }
                 }
                 R.id.navigation_discover -> {
                     showFragment(discoverFragment)
                 }
                 R.id.navigation_my -> {
-                    showFragment(myFragment)
+                    if (checkIsLogin(this, MMKVUtils.getInstance().getUserId())) {
+                        showFragment(myFragment)
+                    }
                 }
             }
             return@setOnItemSelectedListener true

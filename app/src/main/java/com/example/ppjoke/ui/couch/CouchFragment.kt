@@ -31,9 +31,9 @@ class CouchFragment :  BaseMvvmFragment<FragmentCouchBinding,CouchViewModel>(){
 
     override fun initView() {
         binding?.lifecycleOwner=this
-        fragmentList.add(FeedFragment.newInstance(feedType = FEED_TAG_VIDEO, type = TYPE_COUCH))
-        fragmentList.add(FeedFragment.newInstance(feedType = FEED_TAG_PIC, type = TYPE_COUCH))
-        fragmentList.add(FeedFragment.newInstance(feedType = FEED_TAG_TEXT, type = TYPE_COUCH))
+        fragmentList.add(FeedFragment())
+        fragmentList.add(FeedFragment())
+        fragmentList.add(FeedFragment())
         binding!!.viewPagerCouch.adapter=object : FragmentStateAdapter(this){
             override fun getItemCount(): Int {
                 return  fragmentList.size

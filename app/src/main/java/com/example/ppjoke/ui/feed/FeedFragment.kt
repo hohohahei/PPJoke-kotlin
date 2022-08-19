@@ -183,10 +183,10 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                                 }
                             }
                             R.id.like->{
-                                 InteractionPresenter.toggleFeedLikeInternal(adapter!!.data[position])
+                                 InteractionPresenter.toggleFeedLikeInternal(adapter!!.data[position],requireContext())
                             }
                             R.id.favorite->{
-                               InteractionPresenter.toggleFeedFeedFavorite(adapter!!.data[position])
+                               InteractionPresenter.toggleFeedFeedFavorite(adapter!!.data[position],requireContext())
                             }
                             R.id.share->{
                                 InteractionPresenter.openShare(requireContext(),adapter!!.data[position])

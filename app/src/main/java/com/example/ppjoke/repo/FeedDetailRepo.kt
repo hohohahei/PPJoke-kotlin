@@ -14,8 +14,8 @@ class FeedDetailRepo:BaseRepository() {
         RetrofitManager.instance.getApi.toggleCommentLike(userId, commentId).data()
     }
 
-    suspend fun addComment(itemId: Long,commentText:String)=request {
-        RetrofitManager.instance.getApi.addComment(itemId,1581251163,commentText).data()
+    suspend fun addComment(itemId: Long,commentText:String,userId: Long)=request {
+        RetrofitManager.instance.getApi.addComment(itemId,userId,commentText).data()
     }
 
     suspend fun deleteComment(itemId: Long,commentId: Long,userId: Long)=request {

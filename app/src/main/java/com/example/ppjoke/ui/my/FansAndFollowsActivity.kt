@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ppjoke.R
 import com.example.ppjoke.adapter.FansAndFollowsAdapter
+import com.example.ppjoke.bean.UserBean
 import com.example.ppjoke.databinding.ActivityFansFollowsBinding
 import com.example.ppjoke.ui.binding_action.InteractionPresenter
 import com.example.ppjoke.ui.profile.ProfileActivity
@@ -24,7 +25,6 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
         type=intent.getIntExtra("TYPE",0)
         count=intent.getIntExtra("COUNT",0)
         binding.lifecycleOwner=this
-
         if(type==0){
             userId?.let { mViewModel?.queryFans(it) }
         }else{
@@ -33,76 +33,47 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
 
     }
 
+   private fun initAdapter(list:MutableList<UserBean>){
+        if(adapter==null){
+            adapter= FansAndFollowsAdapter(list)
+            adapter!!.addChildClickViewIds(R.id.user_avtar)
+            adapter!!.addChildClickViewIds(R.id.action_follow)
+            adapter!!.setOnItemChildClickListener{_,view,position->
+                when(view.id){
+                    R.id.user_avtar->{
+                        val intent = Intent(this, ProfileActivity::class.java)
+                        intent.putExtra("USERID", adapter!!.data[position].userId)
+                        startActivity(intent)
+                    }
+                    R.id.action_follow->{
+                        val isFollow = InteractionPresenter.toggleFollowUser(adapter!!.data[position].userId!!,this)
+                        count = if(isFollow){
+                            count?.plus(1)
+                        } else{
+                            count?.minus(1)
+                        }
+                        var intent=Intent().apply {
+                            putExtra("KEY_FOLLOW_COUNT",count)
+                        }
+                        setResult(RESULT_OK,intent)
+                    }
+                }
+            }
+            binding.recyclerView.layoutManager=LinearLayoutManager(this)
+            binding.recyclerView.adapter=adapter
+
+        }else{
+            adapter!!.setNewInstance(list)
+        }
+    }
+
     override fun addObserve() {
         super.addObserve()
         mViewModel!!.fansList.observe(this){
-            if(adapter==null){
-                adapter= FansAndFollowsAdapter(it.toMutableList())
-                adapter!!.addChildClickViewIds(R.id.user_avtar)
-                adapter!!.addChildClickViewIds(R.id.action_follow)
-                adapter!!.setOnItemChildClickListener{_,view,position->
-                     when(view.id){
-                         R.id.user_avtar->{
-                             val intent = Intent(this, ProfileActivity::class.java)
-                             intent.putExtra("USERID", adapter!!.data[position].userId)
-                             startActivity(intent)
-                         }
-                         R.id.action_follow->{
-                             val isFollow = InteractionPresenter.toggleFollowUser(adapter!!.data[position].userId!!)
-                             if(isFollow){
-                                 count= count?.plus(1)
-                             }
-                             else{
-                                 count= count?.minus(1)
-                             }
-                             var intent=Intent().apply {
-                                 putExtra("KEY_FOLLOW_COUNT",count)
-                             }
-                             setResult(RESULT_OK,intent)
-                         }
-                     }
-                }
-                binding.recyclerView.layoutManager=LinearLayoutManager(this)
-                binding.recyclerView.adapter=adapter
-
-            }else{
-                adapter!!.setNewInstance(it.toMutableList())
-            }
+            initAdapter(it.toMutableList())
         }
         mViewModel!!.followList.observe(this){
-            if(adapter==null){
-                adapter= FansAndFollowsAdapter(it.toMutableList())
-                adapter!!.addChildClickViewIds(R.id.user_avtar)
-                adapter!!.addChildClickViewIds(R.id.action_follow)
-                adapter!!.setOnItemChildClickListener{_,view,position->
-                    when(view.id){
-                        R.id.user_avtar->{
-                            val intent = Intent(this, ProfileActivity::class.java)
-                            intent.putExtra("USERID", adapter!!.data[position].userId)
-                            startActivity(intent)
-                        }
-                        R.id.action_follow->{
-                            val isFollow = InteractionPresenter.toggleFollowUser(adapter!!.data[position].userId!!)
-                            if(isFollow){
-                                count= count?.plus(1)
-                            }
-                            else{
-
-                               count= count?.minus(1)
-
-                            }
-                            var intent=Intent().apply {
-                                putExtra("KEY_FOLLOW_COUNT",count)
-                            }
-                            setResult(RESULT_OK,intent)
-                        }
-                    }
-                }
-                binding.recyclerView.layoutManager=LinearLayoutManager(this)
-                binding.recyclerView.adapter=adapter
-            }else{
-                adapter!!.setNewInstance(it.toMutableList())
-            }
+            initAdapter(it.toMutableList())
         }
     }
 

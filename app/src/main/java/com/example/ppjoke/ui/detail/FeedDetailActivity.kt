@@ -15,6 +15,7 @@ import com.example.ppjoke.bean.FeedBean
 import com.example.ppjoke.bean.UgcBean
 import com.example.ppjoke.databinding.ActivityFeedDetailBinding
 import com.example.ppjoke.ui.binding_action.InteractionPresenter
+import com.example.ppjoke.ui.binding_action.InteractionPresenter.checkIsLogin
 import com.example.ppjoke.ui.capture.PreviewActivity
 import com.example.ppjoke.ui.profile.ProfileActivity
 import com.example.ppjoke.utils.MMKVUtils
@@ -87,20 +88,22 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                 adapter!!.setOnItemChildClickListener { _, view, position ->
                     when (view.id) {
                         R.id.comment_like -> {
-                            mViewModel?.commentLike(adapter!!.data[position].commentId!!)
-                            adapter!!.data[position].ugc!!.hasLiked = mViewModel!!.isLike
-                            if (mViewModel!!.isLike) {
-                                adapter!!.data[position].ugc!!.likeCount =
-                                    adapter!!.data[position].ugc!!.likeCount!!.plus(
-                                        1
-                                    )
-                            } else {
-                                adapter!!.data[position].ugc!!.likeCount =
-                                    adapter!!.data[position].ugc!!.likeCount?.minus(
-                                        1
-                                    )
+                            if(checkIsLogin(this,mViewModel!!.userId)) {
+                                mViewModel?.commentLike(adapter!!.data[position].commentId!!)
+                                adapter!!.data[position].ugc!!.hasLiked = mViewModel!!.isLike
+                                if (mViewModel!!.isLike) {
+                                    adapter!!.data[position].ugc!!.likeCount =
+                                        adapter!!.data[position].ugc!!.likeCount!!.plus(
+                                            1
+                                        )
+                                } else {
+                                    adapter!!.data[position].ugc!!.likeCount =
+                                        adapter!!.data[position].ugc!!.likeCount?.minus(
+                                            1
+                                        )
+                                }
+                                adapter!!.notifyItemChanged(position)
                             }
-                            adapter!!.notifyItemChanged(position)
                         }
                         R.id.comment_author_avatar -> {
                             val intent = Intent(this, ProfileActivity::class.java)
@@ -118,15 +121,17 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                                 .isDestroyOnDismiss(true)
                                 .dismissOnTouchOutside(false)
                                 .asConfirm("提示","确定要删除该条评论？") {
-                                    mViewModel!!.deleteComment(
-                                        adapter!!.data[position].itemId!!,
-                                        adapter!!.data[position].commentId!!
-                                    ) { isSuccess ->
-                                        if (isSuccess) {
-                                            adapter!!.data.removeAt(position)
-                                            adapter!!.notifyItemRemoved(position)
-                                        }else{
-                                            toastShort("出错了，删除失败！")
+                                    if(checkIsLogin(this,mViewModel!!.userId)) {
+                                        mViewModel!!.deleteComment(
+                                            adapter!!.data[position].itemId!!,
+                                            adapter!!.data[position].commentId!!
+                                        ) { isSuccess ->
+                                            if (isSuccess) {
+                                                adapter!!.data.removeAt(position)
+                                                adapter!!.notifyItemRemoved(position)
+                                            } else {
+                                                toastShort("出错了，删除失败！")
+                                            }
                                         }
                                     }
 
@@ -163,10 +168,10 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.btn_like->{
-                InteractionPresenter.toggleFeedLikeInternal(feed!!)
+                InteractionPresenter.toggleFeedLikeInternal(feed!!,this)
             }
             R.id.btn_collect->{
-                InteractionPresenter.toggleFeedFeedFavorite(feed!!)
+                InteractionPresenter.toggleFeedFeedFavorite(feed!!,this)
             }
             R.id.btn_share->{
                 InteractionPresenter.openShare(this,feed!!)
@@ -182,7 +187,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                 myActivityLauncher.launch(intent)
             }
             R.id.btn_follow->{
-                val isFollow = InteractionPresenter.toggleFollowUser(feed?.author?.userId!!)
+                val isFollow = InteractionPresenter.toggleFollowUser(feed?.author?.userId!!,this)
                 mViewModel!!.userRelation.value=isFollow
 
             }

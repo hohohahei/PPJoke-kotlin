@@ -11,6 +11,7 @@ import com.example.ppjoke.bean.TagBean
 import com.example.ppjoke.bean.UgcBean
 import com.example.ppjoke.databinding.FragmentFocusOnBinding
 import com.example.ppjoke.databinding.FragmentRecommendBinding
+import com.example.ppjoke.ui.binding_action.InteractionPresenter
 import com.example.ppjoke.ui.login.LoginActivity
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.scwang.smart.refresh.footer.BallPulseFooter
@@ -78,16 +79,17 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
                 }
                 adapter!!.addChildClickViewIds(R.id.action_follow)
                 adapter!!.setOnItemChildClickListener { _, view, position ->
-                    if (mViewModel!!.userId!=null) {
-                        mViewModel!!.toggleTagFollow(adapter!!.data[position].tagId!!)
-                        LiveEventBus.get<Map<Int,Any>>("refreshRecommend").post(mapOf<Int,Any>(0 to adapter!!.data[position].tagId!!,1 to false))
-                        adapter!!.data.removeAt(position)
-                        adapter!!.notifyItemRemoved(position)
-                    }else{
-                        val intent = Intent(context, LoginActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                    }
+                        if(InteractionPresenter.checkIsLogin(requireContext(), mViewModel!!.userId)) {
+                            mViewModel!!.toggleTagFollow(adapter!!.data[position].tagId!!)
+                            LiveEventBus.get<Map<Int, Any>>("refreshRecommend").post(
+                                mapOf<Int, Any>(
+                                    0 to adapter!!.data[position].tagId!!,
+                                    1 to false
+                                )
+                            )
+                            adapter!!.data.removeAt(position)
+                            adapter!!.notifyItemRemoved(position)
+                        }
                 }
             }else{
                 adapter!!.setNewInstance(it.toMutableList())

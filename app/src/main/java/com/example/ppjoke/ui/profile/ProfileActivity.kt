@@ -34,7 +34,6 @@ class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,MyViewModel>() {
         binding.actionBack.setOnClickListener {
             finish()
         }
-
         fragmentList.add(FeedFragment.newInstance(profileType = "tab_feed",userId=userId, type = TYPE_PROFILE_FEED))
         fragmentList.add(FeedFragment.newInstance(behavior = BEHAVIOR_FAVORITE,userId=userId, type = TYPE_COLLECTION))
         if(isMy==true){
@@ -61,7 +60,7 @@ class ProfileActivity:BaseMvvmActivity<ActivityProfileBinding,MyViewModel>() {
         tabLayoutMediator.attach()
         binding.btnFollow.visibility=if(userId==MMKVUtils.getInstance().getUserId()) View.GONE else View.VISIBLE
         binding.btnFollow.setOnClickListener {
-            val isFollow= InteractionPresenter.toggleFollowUser(userId!!)
+            val isFollow= InteractionPresenter.toggleFollowUser(userId!!,this)
             mViewModel?.userRelation?.value =isFollow
             val intent = Intent().apply {
                 putExtra("KEY_FOLLOW",isFollow)
