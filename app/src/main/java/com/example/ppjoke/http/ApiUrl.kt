@@ -13,11 +13,15 @@ object ApiUrl {
     const val QUERY_USER="user/query"
     //查询用户帖子
     const val QUERY_PROFILE_FEEDS="feeds/queryProfileFeeds"
-    //
+    //查询粉丝列表
+    const val QUERY_FANS="user/queryFans"
+    //查询关注列表
+    const val QUERY_FOLLOWS="user/queryFollows"
+    //查询历史观看记录，或者收藏的记录
     const val QUERY_USER_BEHAVIOR_LIST="feeds/queryUserBehaviorList"
     //帖子点赞
     const val TOGGLE_FEED_LIKE = "ugc/toggleFeedLike"
-
+    //踩
     const val TOGGLE_FEED_DISS="ugc/dissFeed"
     //帖子分享
     const val TOGGLE_SHARE="ugc/increaseShareCount"

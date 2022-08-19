@@ -2,7 +2,13 @@
 ## Jetpack-MVVM-PPJoke
 Jetpack MVVM最佳实践 开发短视频应用 客户端
 
+参考项目https://github.com/zion223/Jetpack-MVVM-PPJoke进行改写
+
+
 使用 KunMinX的[开源项目](https://github.com/KunMinX/Jetpack-MVVM-Best-Practice)中架构思想 重构此课程代码
+
+### 接口文档地址
+http://123.56.232.18:8080/serverdemo/swagger-ui.html
 
 ###  Jetpack架构原则(摘自谷歌官方文档)
 #### 分离关注点
@@ -19,5 +25,18 @@ Jetpack MVVM最佳实践 开发短视频应用 客户端
 
 ##### 请注意，每个组件仅依赖于其下一级的组件。例如，Activity 和 Fragment 仅依赖于视图模型。存储区是唯一依赖于其他多个类的类；在本例中，存储区依赖于持久性数据模型和远程后端数据源
 
+### 项目中还留存的问题
+#### 接口问题
+发送评论接口（/comment/addComment）存在问题：接口不能接收到传入的itemId，一直报400
+查询用户粉丝和用户关注接口存在问题：1、接口返回的数据中haFollow（是否关注）字段一直为false（不管是关注列表还是粉丝列表）
+                             2、接口没有进行分页处理，传入pageSize和pageCount无效，一直是默认值
+
+#### 项目逻辑代码问题
+1、数据同步的问题：首页给视频点赞、收藏后，在其他的页面相同的视频显示的是没有点赞和收藏等
+#### 还未完善的功能
+qq登录还没有完善，需要自己在腾讯开放平台注册相关应用后替换、设置相关的密钥等才行
+
+用户积分机制、没有相关的接口和需求说明
+                
 
 

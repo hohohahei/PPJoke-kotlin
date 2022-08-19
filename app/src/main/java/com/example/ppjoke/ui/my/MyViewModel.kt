@@ -16,6 +16,8 @@ open class MyViewModel : BaseViewModel() {
     val userRelation=MutableLiveData<Boolean>()
     //初始化tablayout
     val activity = MutableLiveData<FragmentActivity>()
+    val fansList= MutableLiveData<List<UserBean>>()
+    val followList=MutableLiveData<List<UserBean>>()
 
     fun getUserRelation(userId: Long){
         isLoading.value=true
@@ -29,6 +31,24 @@ open class MyViewModel : BaseViewModel() {
         launch {
             val response=repo.queryUserInfo(userId)
             userBean.value= response.data
+            isLoading.value=false
+        }
+    }
+
+    fun queryFans(userId: Long){
+        isLoading.value=true
+        launch {
+            val response=repo.queryFans(userId)
+            fansList.value=response.data
+            isLoading.value=false
+        }
+    }
+
+    fun queryFollows(userId: Long){
+        isLoading.value=true
+        launch {
+            val response=repo.queryFollows(userId)
+            followList.value=response.data
             isLoading.value=false
         }
     }

@@ -15,4 +15,12 @@ class UserRepo: BaseRepository() {
     suspend fun queryUserRelation(userId: Long,authorId:Long)=request{
         RetrofitManager.instance.getApi.queryUserRelation(userId, authorId).data()
     }
+
+    suspend fun queryFans(userId: Long)= request {
+        RetrofitManager.instance.getApi.queryFans(userId).data().data
+    }
+
+    suspend fun queryFollows(userId: Long)= request {
+        RetrofitManager.instance.getApi.queryFollows(userId).data().data
+    }
 }

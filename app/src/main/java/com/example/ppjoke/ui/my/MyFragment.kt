@@ -55,6 +55,18 @@ class MyFragment : BaseMvvmFragment<FragmentMyBinding,MyViewModel>() {
             intent.putExtra("CURRENTITEM",3)
             startActivity(intent)
         }
+        binding?.fansCount?.setOnClickListener {
+            val intent = Intent(context, FansAndFollowsActivity::class.java)
+            intent.putExtra("TITLE","粉丝列表")
+            intent.putExtra("TYPE",0)
+            startActivity(intent)
+        }
+        binding?.followCount?.setOnClickListener {
+            val intent = Intent(context, FansAndFollowsActivity::class.java)
+            intent.putExtra("TITLE","关注列表")
+            intent.putExtra("TYPE",1)
+            startActivity(intent)
+        }
     }
 
     override fun getLayoutId(): Int {

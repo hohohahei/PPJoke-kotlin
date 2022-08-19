@@ -130,4 +130,16 @@ interface ApiService {
         @Query("commentId") commentId: Long,
         @Query("userId") userId: Long
     ):BaseBean<BaseResponse<ToggleResultBooleanResp>>
+
+    @GET(ApiUrl.QUERY_FANS)
+    suspend fun queryFans(
+        @Query("userId") userId: Long
+    ):BaseBean<BaseDataListResponse<UserBean>>
+
+    @GET(ApiUrl.QUERY_FOLLOWS)
+    suspend fun queryFollows(
+        @Query("userId") userId: Long
+    ):BaseBean<BaseDataListResponse<UserBean>>
+
+
 }
