@@ -19,6 +19,9 @@ open class MyViewModel : BaseViewModel() {
     val fansList= MutableLiveData<List<UserBean>>()
     val followList=MutableLiveData<List<UserBean>>()
 
+    val fansCount=MutableLiveData<Int>()
+    val followCount=MutableLiveData<Int>()
+
     fun getUserRelation(userId: Long){
         isLoading.value=true
         launch {
@@ -31,6 +34,8 @@ open class MyViewModel : BaseViewModel() {
         launch {
             val response=repo.queryUserInfo(userId)
             userBean.value= response.data
+            fansCount.value=response.data.followerCount?:0
+            followCount.value=response.data.followCount?:0
             isLoading.value=false
         }
     }

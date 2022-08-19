@@ -1,6 +1,8 @@
 package com.example.ppjoke.ui.my
 
+import android.app.Activity
 import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.example.ppjoke.R
 import com.example.ppjoke.databinding.FragmentMyBinding
@@ -59,18 +61,29 @@ class MyFragment : BaseMvvmFragment<FragmentMyBinding,MyViewModel>() {
             val intent = Intent(context, FansAndFollowsActivity::class.java)
             intent.putExtra("TITLE","粉丝列表")
             intent.putExtra("TYPE",0)
-            startActivity(intent)
+            intent.putExtra("COUNT",mViewModel!!.followCount.value)
+            myActivityLauncher.launch(intent)
         }
         binding?.followCount?.setOnClickListener {
             val intent = Intent(context, FansAndFollowsActivity::class.java)
             intent.putExtra("TITLE","关注列表")
             intent.putExtra("TYPE",1)
-            startActivity(intent)
+            intent.putExtra("COUNT", mViewModel!!.followCount.value)
+            myActivityLauncher.launch(intent)
         }
     }
 
     override fun getLayoutId(): Int {
         return R.layout.fragment_my
+    }
+
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ activityResult ->
+        if(activityResult.resultCode == Activity.RESULT_OK){
+            val backFollowCount= activityResult.data?.getIntExtra("KEY_FOLLOW_COUNT",0)
+            if(backFollowCount!=null){
+                mViewModel?.followCount?.value=backFollowCount
+            }
+        }
     }
 
 }

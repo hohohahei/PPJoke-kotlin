@@ -17,11 +17,14 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
     private var type:Int?=null
     private var userId=MMKVUtils.getInstance().getUserId()
     private var adapter:FansAndFollowsAdapter?=null
+    private var count:Int?=null
 
     override fun initView(savedInstanceState: Bundle?) {
         setToolBarTitle(intent.getStringExtra("TITLE"))
         type=intent.getIntExtra("TYPE",0)
+        count=intent.getIntExtra("COUNT",0)
         binding.lifecycleOwner=this
+
         if(type==0){
             userId?.let { mViewModel?.queryFans(it) }
         }else{
@@ -46,7 +49,16 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
                          }
                          R.id.action_follow->{
                              val isFollow = InteractionPresenter.toggleFollowUser(adapter!!.data[position].userId!!)
-
+                             if(isFollow){
+                                 count= count?.plus(1)
+                             }
+                             else{
+                                 count= count?.minus(1)
+                             }
+                             var intent=Intent().apply {
+                                 putExtra("KEY_FOLLOW_COUNT",count)
+                             }
+                             setResult(RESULT_OK,intent)
                          }
                      }
                 }
@@ -60,8 +72,8 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
         mViewModel!!.followList.observe(this){
             if(adapter==null){
                 adapter= FansAndFollowsAdapter(it.toMutableList())
-                binding.recyclerView.layoutManager=LinearLayoutManager(this)
-                binding.recyclerView.adapter=adapter
+                adapter!!.addChildClickViewIds(R.id.user_avtar)
+                adapter!!.addChildClickViewIds(R.id.action_follow)
                 adapter!!.setOnItemChildClickListener{_,view,position->
                     when(view.id){
                         R.id.user_avtar->{
@@ -71,7 +83,18 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
                         }
                         R.id.action_follow->{
                             val isFollow = InteractionPresenter.toggleFollowUser(adapter!!.data[position].userId!!)
+                            if(isFollow){
+                                count= count?.plus(1)
+                            }
+                            else{
 
+                               count= count?.minus(1)
+
+                            }
+                            var intent=Intent().apply {
+                                putExtra("KEY_FOLLOW_COUNT",count)
+                            }
+                            setResult(RESULT_OK,intent)
                         }
                     }
                 }
