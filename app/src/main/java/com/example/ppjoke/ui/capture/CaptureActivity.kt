@@ -293,6 +293,7 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
         Intrinsics.checkParameterIsNotNull(sourceUri,"资源为空")
         UCrop.of(sourceUri,getDestinationUri())
             .withMaxResultSize(500,500)
+
             .start(this)
     }
 

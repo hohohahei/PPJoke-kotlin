@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_top_radius_20dp"
+        android:background="@drawable/shape_sheet_dialog_bg"
         >
 
         <androidx.recyclerview.widget.RecyclerView

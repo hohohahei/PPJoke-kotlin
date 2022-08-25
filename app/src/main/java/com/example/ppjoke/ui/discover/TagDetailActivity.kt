@@ -75,6 +75,7 @@ class TagDetailActivity : BaseMvvmActivity<ActivityTagDetailBinding,DiscoverView
         return  DataBindingUtil.setContentView(this,R.layout.activity_tag_detail)
     }
 
+
     override fun getViewModel(): DiscoverViewModel {
         return ViewModelProvider(this).get(DiscoverViewModel::class.java)
     }

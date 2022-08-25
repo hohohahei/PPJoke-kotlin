@@ -11,6 +11,10 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.widget.addTextChangedListener
+import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
 import com.example.ppjoke.R
 
 class EditTextItemView@JvmOverloads constructor(
@@ -33,15 +37,15 @@ class EditTextItemView@JvmOverloads constructor(
         tvTitle = root.findViewById(R.id.tv_title)
         editTextView = root.findViewById(R.id.et_content)
         dividerView = root.findViewById(R.id.divider)
+
         hint = typedArray.getString(R.styleable.MyEditTextItemView_edt_hint)
-        content = typedArray.getString(R.styleable.MyEditTextItemView_edt_content)
+        editTextView.hint = hint
+
         tvTitle.text = typedArray.getString(R.styleable.MyEditTextItemView_tv_title)
         editTextView.inputType = typedArray.getInt(
             R.styleable.MyEditTextItemView_android_inputType,
             InputType.TYPE_CLASS_TEXT
         )
-        editTextView.setText(content)
-        editTextView.hint = hint
 
         if (typedArray.getBoolean(R.styleable.MyEditTextItemView_isShowDivider, true)) {
             dividerView.visibility = VISIBLE
@@ -49,5 +53,46 @@ class EditTextItemView@JvmOverloads constructor(
             dividerView.visibility = GONE
         }
 
+    }
+    companion object{
+        @JvmStatic
+        @BindingAdapter("edt_content")
+        fun setTextItemView( view: EditTextItemView,
+                            content: String?){
+            view.setContent(content)
+        }
+
+        @JvmStatic
+        @InverseBindingAdapter(attribute = "edt_content", event = "edt_contentAttrChanged")
+        fun getEditContentText(view: EditTextItemView):String{
+            return view.editTextView.text.toString()
+        }
+
+        @JvmStatic
+        @BindingAdapter("edt_contentAttrChanged")
+        fun setChangeListener(view: EditTextItemView,listener:InverseBindingListener?){
+            var txt=""
+            view.editTextView.addTextChangedListener {
+                if(txt!=it.toString()){
+                    listener?.onChange()
+                    txt=it.toString()
+                }
+                view.editTextView.setSelection(txt.length)
+            }
+        }
+
+
+    }
+
+    fun setText(title:String?){
+        tvTitle.text=title
+    }
+
+    fun setContent(content:String?){
+        editTextView.setText(content)
+    }
+
+    fun setHint(hint: String?){
+        editTextView.hint = hint
     }
 }

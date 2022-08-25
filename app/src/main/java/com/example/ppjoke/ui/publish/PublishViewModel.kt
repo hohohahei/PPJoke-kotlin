@@ -31,7 +31,7 @@ class PublishViewModel:BaseViewModel() {
 
      fun publish(coverUploadUrl:String?, fileUploadUrl:String?, width:Int=720,
                         height:Int=1280, tagBean: TagBean?, inputText:String, isVideo:Boolean){
-
+          println("上传的coverUploadUrl $coverUploadUrl 和 $fileUploadUrl")
           val tagId=tagBean?.tagId?:0
           val tagTitle=tagBean?.title?:""
           val feedType=if(isVideo) 2 else 1

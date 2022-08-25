@@ -17,13 +17,14 @@ import com.example.ppjoke.adapter.ShareAdapter
 import com.example.ppjoke.databinding.LayoutBottomShareDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class BottomShareDialog(context: Context):BottomSheetDialog(context) {
+class BottomShareDialog(context: Context):BottomSheetDialog(context,R.style.BottomSheetDialog) {
     private lateinit var binding:LayoutBottomShareDialogBinding
     private var shareContent:String?=""
     private var mListener: View.OnClickListener?=null
     private lateinit var shareAdapter: ShareAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding=DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_bottom_share_dialog,null,false)
         binding.recyclerView.layoutManager= GridLayoutManager(context,4)
         shareAdapter= ShareAdapter(context,ArrayList())

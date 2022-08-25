@@ -11,7 +11,6 @@
 
     <declare-styleable name="MyTextItemView">
         <attr name="tv_title" format="string"/>
-        <attr name="tv_content" format="string"/>
         <attr name="tv_hint" format="string"/>
         <attr name="tv_titleTextSize" format="dimension"/>
         <attr name="isShowDivider" format="boolean"/>
@@ -21,7 +20,6 @@
     <declare-styleable name="MyEditTextItemView">
         <attr name="tv_title" />
         <attr name="edt_hint" format="string" />
-        <attr name="edt_content" format="string"/>
         <attr name="android:inputType" />
         <attr name="tv_titleTextSize" />
         <attr name="isShowDivider" />
@@ -30,9 +28,7 @@
 
     <declare-styleable name="MyImageItemView">
         <attr name="tv_title" />
-        <attr name="image_url" format="string"/>
         <attr name="tv_titleTextSize" />
-        <attr name="placeholderImage" format="reference"/>
         <attr name="isShowDivider" />
         />
     </declare-styleable>
@@ -40,4 +36,36 @@
     <string-array name="spinner_more_item">
         <item>删除</item>
     </string-array>
+
+    <declare-styleable name="view_offset_behavior">
+        <attr name="anchor_gravity" format="enum">
+            <enum name="left" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+        <attr name="scroll_follow" format="boolean" />
+        <attr name="anchor_id" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="view_anchor_behavior">
+        <attr name="anchorId" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="view_zoom_behavior">
+        <attr name="min_height" format="dimension" />
+        <attr name="scrolling_id" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="viewOutLineStrategy">
+        <attr name="clip_radius" format="dimension"></attr>
+        <attr name="clip_side" format="enum">
+            <enum name="all" value="0"></enum>
+            <enum name="left" value="1"></enum>
+            <enum name="top" value="2"></enum>
+            <enum name="right" value="3"></enum>
+            <enum name="bottom" value="4"></enum>
+        </attr>
+    </declare-styleable>
+
 </resources>

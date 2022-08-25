@@ -37,6 +37,10 @@ class PPImageView : ShapeableImageView {
         setImageUrl(this, imageUrl,null)
     }
 
+    fun setPlaceholder(placeUrl:Drawable?){
+        setImageUrl(this,null,placeUrl)
+    }
+
     fun bindData(widthPx: Int, heightPx: Int, marginLeft: Int, imageUrl: String?) {
         bindData(
             widthPx,
@@ -117,9 +121,11 @@ class PPImageView : ShapeableImageView {
                 builder.placeholder(placeholder)
                 builder.error(placeholder)
             }
+
              else if (radius > 0) {
                 builder.transform(RoundedCornersTransformation(ConvertUtils.dp2px(radius.toFloat()), 0))
             }
+
             val layoutParams = view.layoutParams
             if (layoutParams != null && layoutParams.width > 0 && layoutParams.height > 0) {
                 builder.override(layoutParams.width, layoutParams.height)

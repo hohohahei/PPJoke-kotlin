@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+       <variable
+           name="userBean"
+           type="com.example.ppjoke.bean.UserBean"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,34 +32,46 @@
                 android:id="@+id/userId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tv_content="123456"
+                tv_content='@{userBean.userId+""}'
                 app:tv_title="ID" />
 
             <com.example.ppjoke.widget.ImageItemView
+                android:id="@+id/user_avtar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:tv_title="头像"
-                app:image_url="http://qzapp.qlogo.cn/qzapp/101794421/59BC25EDC7C9D1ADAD9D1617486056C7/100"
+                placeholder="@{@drawable/default_avatar}"
+                image_url="@{userBean.avatar}"
                 />
 
             <com.example.ppjoke.widget.EditTextItemView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:edt_hint="哈哈哈"
+                edt_content="@={userBean.name}"
+                app:edt_hint="请输入昵称"
                 app:tv_title="昵称" />
 
             <com.example.ppjoke.widget.EditTextItemView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:edt_hint="哈哈哈"
+                edt_content="@={userBean.description}"
+                app:edt_hint="请输入个性签名"
                 app:tv_title="个性签名" />
-            <com.example.ppjoke.widget.TextItemView
-                android:id="@+id/feed_count"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tv_content="12"
-                app:tv_title="发布帖子数" />
-
         </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginBottom="@dimen/sp_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:backgroundTint="@color/color_theme"
+            android:gravity="center"
+            app:cornerRadius="8dp"
+            android:text="保存"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

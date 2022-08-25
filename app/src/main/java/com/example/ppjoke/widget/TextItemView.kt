@@ -8,42 +8,63 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.databinding.BindingAdapter
 import com.example.ppjoke.R
 
-class TextItemView@JvmOverloads constructor(
+class TextItemView @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
-    defStyAttrs: Int = 0) : ConstraintLayout(context, attributeSet, defStyAttrs) {
-    private var tvTitle:TextView
-    private var tvContent:TextView
-    private var dividerView:View
-    private var hint:String?=null
+    defStyAttrs: Int = 0
+) : ConstraintLayout(context, attributeSet, defStyAttrs) {
+    private var tvTitle: TextView
+    private var tvContent: TextView
+    private var dividerView: View
+    private var hint: String? = null
 
     @SuppressLint("CustomViewStyleable")
-    val typedArray:TypedArray=context.obtainStyledAttributes(attributeSet, R.styleable.MyTextItemView)
+    val typedArray: TypedArray =
+        context.obtainStyledAttributes(attributeSet, R.styleable.MyTextItemView)
 
     init {
-        var root=LayoutInflater.from(context).inflate(R.layout.layout_user_info_tv_item,this)
-        tvTitle=root.findViewById(R.id.tv_title)
-        tvContent=root.findViewById(R.id.tv_content)
-        dividerView=root.findViewById(R.id.divider)
-        tvTitle.text=typedArray.getString(R.styleable.MyTextItemView_tv_title)
-        tvContent.text=typedArray.getString(R.styleable.MyTextItemView_tv_content)
-        hint=typedArray.getString(R.styleable.MyTextItemView_tv_hint)
-        tvContent.hint=hint
-        if(typedArray.getBoolean(R.styleable.MyTextItemView_isShowDivider,true)){
-            dividerView.visibility=VISIBLE
-        }else{
-            dividerView.visibility= GONE
+        var root = LayoutInflater.from(context).inflate(R.layout.layout_user_info_tv_item, this)
+        tvTitle = root.findViewById(R.id.tv_title)
+        tvContent = root.findViewById(R.id.tv_content)
+        dividerView = root.findViewById(R.id.divider)
+        tvTitle.text = typedArray.getString(R.styleable.MyTextItemView_tv_title)
+        hint = typedArray.getString(R.styleable.MyTextItemView_tv_hint)
+        tvContent.hint = hint
+        if (typedArray.getBoolean(R.styleable.MyTextItemView_isShowDivider, true)) {
+            dividerView.visibility = VISIBLE
+        } else {
+            dividerView.visibility = GONE
         }
     }
 
-    fun setText(title:String){
-        tvTitle.text=title
+    companion object {
+        @JvmStatic
+        @BindingAdapter(value = ["tv_content"],requireAll = false)
+        fun setTextItemView( view: TextItemView,
+                             content: String?){
+            view.setContent(content)
+        }
+//        @JvmStatic
+//        @BindingAdapter("tv_content")
+//        fun setContent(view: TextItemView, content: String?) {
+//            view.setContent(content)
+//        }
+//
     }
 
-    fun setContent(content:String){
-        tvContent.text=content
+    fun setText(title: String?) {
+        tvTitle.text = title
+    }
+
+    fun setContent(content: String?) {
+        tvContent.text = content
+    }
+
+    fun setHint(hint: String?) {
+        tvContent.hint = hint
     }
 
 }

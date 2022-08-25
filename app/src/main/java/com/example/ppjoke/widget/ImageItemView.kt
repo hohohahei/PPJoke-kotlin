@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.databinding.BindingAdapter
 import com.example.ppjoke.R
 
 class ImageItemView@JvmOverloads constructor(
@@ -23,6 +24,8 @@ class ImageItemView@JvmOverloads constructor(
     private var dividerView: View
     private var imageUrl: String?=null
     private var placeholder:Drawable?=null
+    private var title:String?=null
+
 
     @SuppressLint("CustomViewStyleable")
     val typedArray: TypedArray =
@@ -33,15 +36,41 @@ class ImageItemView@JvmOverloads constructor(
         tvTitle = root.findViewById(R.id.tv_title)
         imageView = root.findViewById(R.id.iv_image)
         dividerView = root.findViewById(R.id.divider)
-        tvTitle.text = typedArray.getString(R.styleable.MyImageItemView_tv_title)
-        imageUrl=typedArray.getString(R.styleable.MyImageItemView_image_url)
-     //   placeholder=typedArray.getDrawable(R.styleable.MI)
-        imageView.setImageUrl(imageUrl)
-        if (typedArray.getBoolean(R.styleable.MyEditTextItemView_isShowDivider, true)) {
+        title = typedArray.getString(R.styleable.MyImageItemView_tv_title)
+        tvTitle.text=title
+        if (typedArray.getBoolean(R.styleable.MyImageItemView_isShowDivider, true)) {
             dividerView.visibility = VISIBLE
         } else {
             dividerView.visibility = GONE
         }
 
+    }
+
+    companion object{
+        @JvmStatic
+        @BindingAdapter(value = ["image_url","placeholder"],requireAll = false)
+        fun setImageItemView(
+            view: ImageItemView,
+            imageUrl: String?,placeholder:Drawable?
+        ){
+            view.setImageUrl(imageUrl)
+            view.setPlaceholder(placeholder)
+        }
+
+    }
+
+    fun setTitle(title: String?){
+        this.title=title
+        tvTitle.text=title
+    }
+
+    fun setImageUrl(url:String?){
+        this.imageUrl=url
+        imageView.setImageUrl(url)
+    }
+
+    fun setPlaceholder(placeholder: Drawable?){
+        this.placeholder=placeholder
+        imageView.setPlaceholder(placeholder)
     }
 }
