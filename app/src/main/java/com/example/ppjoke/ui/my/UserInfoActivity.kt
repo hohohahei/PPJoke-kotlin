@@ -1,12 +1,15 @@
 package com.example.ppjoke.ui.my
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Looper
+import android.text.TextUtils
 import android.util.Size
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
@@ -14,23 +17,38 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import com.blankj.utilcode.util.ThreadUtils
 import com.example.ppjoke.R
 import com.example.ppjoke.contract.SelectPhotoContract
 import com.example.ppjoke.contract.TakePhotoContract
 import com.example.ppjoke.databinding.ActivityUserInfoBinding
 import com.example.ppjoke.ui.capture.CaptureActivity
+import com.example.ppjoke.ui.publish.UploadFileWork
+import com.example.ppjoke.utils.FileUtils
 import com.example.ppjoke.utils.MMKVUtils
 import com.example.ppjoke.widget.dialog.BottomAlbumDialog
+import com.example.ppjoke.widget.dialog.LoadingDialog
 import com.xtc.base.BaseMvvmActivity
 import com.xtc.base.utils.toastShort
 import com.yalantis.ucrop.UCrop
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.jvm.internal.Intrinsics
 
 class UserInfoActivity : BaseMvvmActivity<ActivityUserInfoBinding, MyViewModel>() {
     private var outputFilePath: String? = null
     private val deniedPermission = ArrayList<String>()
     private val resolution = Size(300, 300)
+    private var mLoadingDialog: LoadingDialog? = null
+    private var coverUploadUUID: UUID? = null
+    private  var fileUploadUUID: UUID? = null
+    private var coverUploadUrl: String? = null
+    private  var fileUploadUrl:String? = null
 
     companion object {
         const val PERMISSION_ALBUM_CODE = 1000
@@ -64,11 +82,19 @@ class UserInfoActivity : BaseMvvmActivity<ActivityUserInfoBinding, MyViewModel>(
                 }
 
                 override fun takePicture() {
-                    takePhotoLauncher.launch(null)
+                    ActivityCompat.requestPermissions(
+                        this@UserInfoActivity,
+                        PERMISSIONS,
+                        PERMISSION_TAKE_PHOTO_CODE
+                    )
+
                 }
 
             }
             dialog.show()
+        }
+        binding.btnSave.setOnClickListener {
+            save()
         }
     }
 
@@ -182,6 +208,94 @@ class UserInfoActivity : BaseMvvmActivity<ActivityUserInfoBinding, MyViewModel>(
                     )
                 }.create().show()
         }
+    }
+
+    private fun enqueue(workRequests: List<OneTimeWorkRequest>) {
+        val workContinuation = WorkManager.getInstance(this).beginWith(workRequests)
+        workContinuation.enqueue()
+        workContinuation.workInfosLiveData.observe(
+            this
+        ) { workInfos -> //block runing enuqued failed susscess finish
+            var completedCount = 0
+            var failedCount = 0
+            for (workInfo in workInfos) {
+                val state = workInfo.state
+                val outputData = workInfo.outputData
+                val uuid = workInfo.id
+                if (state == WorkInfo.State.FAILED) {
+                    // if (uuid==coverUploadUUID)是错的
+                    if (uuid == coverUploadUUID) {
+                        toastShort(getString(R.string.file_upload_cover_message))
+                    } else if (uuid == fileUploadUUID) {
+                        toastShort(getString(R.string.file_upload_original_message))
+                    }
+                    failedCount++
+                } else if (state == WorkInfo.State.SUCCEEDED) {
+                    val fileUrl = outputData.getString("fileUrl")
+                    if (uuid == coverUploadUUID) {
+                        coverUploadUrl = fileUrl
+                    } else if (uuid == fileUploadUUID) {
+                        fileUploadUrl = fileUrl
+                    }
+                    completedCount++
+                }
+            }
+            if (completedCount >= workInfos.size) {
+                mViewModel!!.userBean.value?.avatar=fileUploadUrl
+                mViewModel!!.saveUserInfo()
+            } else if (failedCount > 0) {
+                dismissLoading()
+            }
+        }
+    }
+
+    private fun showLoading() {
+        if (mLoadingDialog == null) {
+            mLoadingDialog = LoadingDialog(this)
+            mLoadingDialog!!.setLoadingText(getString(R.string.feed_publish_ing))
+        }
+        mLoadingDialog!!.show()
+    }
+
+    private fun dismissLoading() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            if (mLoadingDialog != null) {
+                mLoadingDialog!!.dismiss()
+            }
+        } else {
+            ThreadUtils.runOnUiThread {
+                if (mLoadingDialog != null) {
+                    mLoadingDialog!!.dismiss()
+                }
+            }
+        }
+    }
+
+    fun save(){
+        showLoading()
+        val workRequests: MutableList<OneTimeWorkRequest> = java.util.ArrayList()
+        if (!TextUtils.isEmpty(outputFilePath)) {
+
+            val request = getOneTimeWorkRequest(outputFilePath!!)
+            fileUploadUUID = request.id
+            workRequests.add(request)
+            //如果是视频文件则需要等待封面文件生成完毕后再一同提交到任务队列
+            //否则 可以直接提交了
+            enqueue(workRequests)
+        } else {
+            println("返回图片地址2：$fileUploadUrl")
+            mViewModel!!.saveUserInfo()
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun getOneTimeWorkRequest(filePath: String): OneTimeWorkRequest {
+        val inputData: Data = Data.Builder()
+            .putString("file", filePath)
+            .build()
+        return OneTimeWorkRequest.Builder(UploadFileWork::class.java)
+            .setInputData(inputData) //                .setConstraints(constraints)
+            .build()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

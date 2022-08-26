@@ -141,5 +141,10 @@ interface ApiService {
         @Query("userId") userId: Long
     ):BaseBean<BaseDataListResponse<UserBean>>
 
+    @FormUrlEncoded
+    @POST(ApiUrl.UPDATE_USER)
+    suspend fun updateUser(
+        @Field("user") user:String
+    )
 
 }

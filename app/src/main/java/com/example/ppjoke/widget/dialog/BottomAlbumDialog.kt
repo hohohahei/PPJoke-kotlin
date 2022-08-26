@@ -26,7 +26,9 @@ class BottomAlbumDialog(context: Context):BottomSheetDialog(context) {
         binding.tvAlbum.setOnClickListener {
               albumDialogClick?.openAlbum()
         }
-        binding.tvPhotograph.setOnClickListener {  }
+        binding.tvPhotograph.setOnClickListener {
+            albumDialogClick?.takePicture()
+        }
         binding.tvCancel.setOnClickListener {
             dismiss()
         }

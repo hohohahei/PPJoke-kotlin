@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.blankj.utilcode.util.GsonUtils
 import com.example.ppjoke.bean.UserBean
 import com.example.ppjoke.repo.UserRepo
 import com.example.ppjoke.utils.MMKVUtils
@@ -21,6 +22,7 @@ open class MyViewModel : BaseViewModel() {
 
     val fansCount=MutableLiveData<Int>()
     val followCount=MutableLiveData<Int>()
+    val updateStatus=MutableLiveData<Boolean>()
 
     fun getUserRelation(userId: Long){
         isLoading.value=true
@@ -55,6 +57,15 @@ open class MyViewModel : BaseViewModel() {
             val response=repo.queryFollows(userId)
             followList.value=response.data
             isLoading.value=false
+        }
+    }
+
+    fun saveUserInfo(){
+        println("上传的user：${userBean.value?.description}")
+        launch {
+            var user=GsonUtils.toJson(userBean.value)
+            val response=  repo.updateUser(user)
+            updateStatus.value=true
         }
     }
 }

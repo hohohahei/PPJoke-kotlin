@@ -1,5 +1,6 @@
 package com.example.ppjoke.repo
 
+import com.example.ppjoke.bean.UserBean
 import com.example.ppjoke.http.RetrofitManager
 import com.xtc.base.http.BaseRepository
 
@@ -22,5 +23,9 @@ class UserRepo: BaseRepository() {
 
     suspend fun queryFollows(userId: Long)= request {
         RetrofitManager.instance.getApi.queryFollows(userId).data().data
+    }
+
+    suspend fun updateUser(user:String)=request {
+        RetrofitManager.instance.getApi.updateUser(user)
     }
 }

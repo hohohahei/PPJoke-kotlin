@@ -41,6 +41,8 @@ object ApiUrl {
     const val TOGGLE_COMMENT_LIKE="ugc/toggleCommentLike"
     //添加用户
     const val USER_INSERT="user/insert"
+    //更新用户信息
+    const val UPDATE_USER="user/update"
     //查询用户间关系
     const val USER_RELATION="user/relation"
     //标签关注
