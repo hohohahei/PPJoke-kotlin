@@ -240,7 +240,9 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
             }
 
         cameraProvider.unbindAll()
-        val useCaseGroup = UseCaseGroup.Builder()   //因为CameraX不能添加太多的userCase，不然会报错，只能把imageAnalyzer先给去掉
+        val useCaseGroup = UseCaseGroup.Builder()   //因为CameraX不能添加太多的userCase，不然会报错，只能把imageAnalyzer先给去掉,
+                                                   //由于摄像机硬件管道的定标器单元限制，对同时输出的数量存在限制。通常，在高端设备之外不支持3个并行YUV输出
+                                                  //如果不支持这么多，则需要注释掉一部分
             .addUseCase(mPreview)
          //  .addUseCase(imageAnalyzer!!)
             .addUseCase(imageCapture!!)
@@ -369,7 +371,7 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
 
                 // Create output file to hold the image
                 val photoFile=  File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                     System.currentTimeMillis().toString() + ".jpg"
                 )
 
@@ -493,10 +495,11 @@ class CaptureActivity : BaseMvvmActivity<ActivityCaptureBinding, CaptureViewMode
                 val inputStream: InputStream? = contentResolver.openInputStream(uri)
                 val cache: File = File(context.cacheDir.absolutePath, displayName)
                 val fos = FileOutputStream(cache)
-                FileUtils.copy(inputStream!!, fos)
+             //   FileUtils.copy(inputStream!!, fos)
+                inputStream?.copyTo(fos)
                 file = cache
                 fos.close()
-                inputStream.close()
+                inputStream?.close()
             } catch (e: IOException) {
                 e.printStackTrace()
             }

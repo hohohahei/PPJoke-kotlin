@@ -111,6 +111,9 @@ class UserInfoActivity : BaseMvvmActivity<ActivityUserInfoBinding, MyViewModel>(
         mViewModel?.userBean?.observe(this) {
             binding.userBean = mViewModel!!.userBean.value
         }
+        mViewModel?.updateStatus?.observe(this){
+            dismissLoading()
+        }
     }
 
     private fun takePicture(code: Int) {
