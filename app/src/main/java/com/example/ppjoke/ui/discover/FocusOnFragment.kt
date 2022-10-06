@@ -37,13 +37,11 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
             setRefreshFooter(BallPulseFooter(context))
             setOnRefreshListener {
                 refresh()
-                finishRefresh(2000)
             }
             setOnLoadMoreListener {
                 if(adapter?.data?.size!! >0&&adapter?.data?.size!!%10==0) {
                     adapter?.data?.last()?.let { it1 -> mViewModel?.loadMoreTag(it1.tagId!!, "onlyFollow") }
                 }
-                finishLoadMore(2000)
 
             }
         }
@@ -69,6 +67,7 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
     override fun addObserve() {
         super.addObserve()
         mViewModel!!.tagList.observe(viewLifecycleOwner){
+            if (binding!!.refreshLayout.isRefreshing) binding!!.refreshLayout.finishRefresh()
             if(adapter==null){
                 adapter= TagListAdapter(ArrayList())
                 adapter!!.addData(it)
@@ -99,6 +98,7 @@ class FocusOnFragment : BaseMvvmFragment<FragmentRecommendBinding,DiscoverViewMo
             binding!!.recyclerView.adapter=adapter
         }
         mViewModel!!.tagLoadMoreList.observe(this){
+            if (binding!!.refreshLayout.isLoading) binding!!.refreshLayout.finishLoadMore()
             adapter?.addData(it)
         }
     }

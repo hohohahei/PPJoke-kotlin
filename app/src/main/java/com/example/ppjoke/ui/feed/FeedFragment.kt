@@ -44,8 +44,8 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
         const val TYPE_COLLECTION = 1002  //个人收藏
         const val TYPE_COMMENT=1003  //个人评论
         const val TYPE_HISTORY=1004  //个人历史
-        const val TYPE_COUCH = 1003 //沙发页
-        const val TYPE_TAG=1004 //标签页
+        const val TYPE_COUCH = 1005 //沙发页
+        const val TYPE_TAG=1006 //标签页
         const val BEHAVIOR_FAVORITE = 0  //收藏
         const val BEHAVIOR_HISTORY = 1  //历史
         const val FEED_TAG_PIC = "pics" //图片
@@ -101,7 +101,6 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                     TYPE_COUCH, TYPE_TAG -> mViewModel?.getFeedList(feedType = feedType!!)
                 }
                 // mViewModel?.getFeedList()
-                finishRefresh(2000)
             }
             setOnLoadMoreListener {
                 if (adapter?.data?.size!! > 0 && adapter?.data?.size!! % 10 == 0) {
@@ -129,8 +128,6 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
                     }
 
                 }
-                finishLoadMore(1000)
-
             }
         }
         if (userId != null&&userId != 0L) {
@@ -151,6 +148,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
     override fun addObserve() {
         super.addObserve()
         mViewModel!!.feedList.observe(viewLifecycleOwner) {
+            if(binding!!.refreshLayout.isRefreshing)  binding!!.refreshLayout.finishRefresh()
             if (it.isNotEmpty()) {
                 if (adapter == null) {
                     adapter = FeedMultAdapter(it.toMutableList(), feedType ?: "feed_fragment",playDetector)
@@ -234,6 +232,7 @@ class FeedFragment: BaseMvvmFragment<FragmentFeedBinding, FeedViewModel>() {
             }
         }
         mViewModel!!.loadMoreList.observe(viewLifecycleOwner) {
+            if ( binding!!.refreshLayout.isLoading) binding!!.refreshLayout.finishLoadMore()
             adapter?.addData(it)
         }
     }

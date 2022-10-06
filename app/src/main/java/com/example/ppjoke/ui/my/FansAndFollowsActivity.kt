@@ -30,6 +30,17 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
         }else{
             userId?.let { mViewModel?.queryFollows(it) }
         }
+        binding.refreshLayout.setOnRefreshListener {
+            when(type){
+                0->{
+                    userId?.let { mViewModel?.queryFans(it) }
+                }
+                else->{
+                    userId?.let { mViewModel?.queryFollows(it) }
+                }
+            }
+
+        }
 
     }
 
@@ -70,9 +81,11 @@ class FansAndFollowsActivity:BaseMvvmActivity<ActivityFansFollowsBinding,MyViewM
     override fun addObserve() {
         super.addObserve()
         mViewModel!!.fansList.observe(this){
+            if(binding.refreshLayout.isRefreshing) binding.refreshLayout.finishRefresh()
             initAdapter(it.toMutableList())
         }
         mViewModel!!.followList.observe(this){
+            if(binding.refreshLayout.isRefreshing) binding.refreshLayout.finishRefresh()
             initAdapter(it.toMutableList())
         }
     }

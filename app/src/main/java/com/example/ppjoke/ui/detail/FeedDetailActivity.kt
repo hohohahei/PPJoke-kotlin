@@ -56,7 +56,6 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
                         it.id?.let { it1 -> mViewModel?.loadMore(it1, it.itemId!!) }
                     }
                 }
-                finishLoadMore(2000)
             }
         }
 
@@ -72,6 +71,7 @@ class FeedDetailActivity : BaseMvvmActivity<ActivityFeedDetailBinding, FeedDetai
     override fun addObserve() {
         super.addObserve()
         mViewModel!!.commentList.observe(this) {
+            if (binding.refreshLayout.isRefreshing) binding.refreshLayout.finishRefresh()
             if (it.isEmpty()) {
                 binding.recyclerView.visibility = View.GONE
                 binding.emptyView.visibility = View.VISIBLE
